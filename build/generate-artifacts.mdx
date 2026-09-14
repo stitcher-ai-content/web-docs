@@ -22,8 +22,8 @@ Every artifact has a **group** and a **name** you assign when you create it. Tha
   <Card title="Derived dataset" icon="table">
     A custom view or report built with SQL over the cost model and other artifacts — a chargeback report, margin by feature, or cost per tenant.
   </Card>
-  <Card title="Commitment-coverage report" icon="file-contract">
-    Reserved-instance and savings-plan coverage and utilization.
+  <Card title="Commitment Discounts coverage" icon="percent">
+    An indicator of how much eligible usage is covered by cloud **commitment discounts** — Reserved Instances, Savings Plans, committed-use discounts — and how well they are utilized. Read from the FOCUS `CommitmentDiscount*` columns already in your cost feed.
   </Card>
   <Card title="Forecast" icon="wand-magic-sparkles" href="/build/events">
     A projection built on an Indicator, driven by named business events. A forecast is itself a generated artifact — see Events.
@@ -35,10 +35,24 @@ Every artifact has a **group** and a **name** you assign when you create it. Tha
 An Indicator rolls detailed cost up with an **aggregation** — sum, average, a percentile, distinct count, and so on — at the **granularity** you choose (daily, weekly, monthly, quarterly, yearly) and the **grouping** you choose (by team, by service, by tenant).
 
 <Tip>
-**Unit economics are just Indicators** whose metric is cost divided by a business quantity — cost per inference, per feature, per tenant. That's what lets you [govern a unit-economics KPI against a threshold](/build/govern) and what makes [AI unit economics](/managing-ai-spend) possible.
+**Unit economics are just Indicators** whose metric is cost divided by a business quantity — cost per inference, per feature, per tenant. That's what lets you [govern a unit-economics KPI against a threshold](/build/govern) and what makes [AI unit economics](/cost-model/ai-cost-management) possible.
 </Tip>
 
 Optionally link an Indicator to a **budget** to combine it with budget figures and track **budget versus actual** and the variance between them.
+
+### Commitment Discounts vs Contract Intelligence
+
+"Commitment" means two different things, and StitcherAI keeps them apart:
+
+| | **Commitment Discounts coverage** | **Contract Intelligence artifacts** |
+|---|---|---|
+| **About** | Cloud-provider discount instruments — Reserved Instances, Savings Plans, committed-use discounts. | Signed vendor agreements (a data-warehouse or messaging contract, say) parsed from PDF into committed spend, term, and rates. |
+| **Data** | The FOCUS `CommitmentDiscount*` columns in your cost feed. | The contract document itself, brought in as a Contract Intelligence source. |
+| **You get** | Coverage and utilization of eligible usage, over time. | A **commitment burn-down** (committed plan, Consumption, running balance, projection), a **renewal/expiry tracker**, and **invoice reconciliation**. |
+
+<Info>
+The Contract Intelligence artifacts are described on [Contract Intelligence](/cost-model/contract-intelligence). They are **currently in preview**.
+</Info>
 
 ## Artifacts can be chained
 

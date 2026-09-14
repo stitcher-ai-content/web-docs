@@ -1,6 +1,6 @@
 ---
 title: "How to: Build a forecast"
-description: "Enable forecast on a Time series indicator from its base settings, then optionally sharpen it with named events — built by chat or directly — and compare what-if scenarios by toggling them."
+description: "Enable forecast on a Time series indicator from its base settings, then optionally sharpen it with named events — built by chat or directly — review correlated costs, and compare what-if scenarios by toggling them."
 ---
 
 ## What this does, and why
@@ -58,6 +58,22 @@ Event banks live under **Build → Events**. Add one under **Custom** and give i
 
 Back on the indicator, set **Event banks to apply** to the bank(s) this forecast should account for.
 
+## Review correlated costs
+
+When an event is scoped to part of the model (a `ServiceCategory`, a `ProviderName`, a `BillingAccountId`), StitcherAI shows the other cost series that have historically moved with it.
+
+<Steps>
+  <Step title="Preview the event">
+    After saving a scoped event, open its preview. The **Correlated costs** panel appears beside it, ranked strongest first, with each series' direction, lead/lag, and per-dollar sensitivity.
+  </Step>
+  <Step title="Judge which relationships matter">
+    Look for a strong relationship, a direction that makes business sense, and a sensitivity large enough to move your forecast. Treat the list as a ranking to guide you, not a rule.
+  </Step>
+  <Step title="Optionally add a linked effect">
+    Choose **Add linked effect** on a correlated series. It is saved as an extra scoped event in the same bank, so toggling the driver's bank toggles the linked effect with it. Add linked effects one at a time; repeat for each series that should follow the driver.
+  </Step>
+</Steps>
+
 ## Compare what-if scenarios
 
 <Steps>
@@ -84,6 +100,9 @@ Back on the indicator, set **Event banks to apply** to the bank(s) this forecast
   <Step title="Apply it">
     Set the indicator's Event banks to apply to `Migration scenarios`.
   </Step>
+  <Step title="Review correlated costs">
+    The event's preview lists the series that historically move with Compute — say, a storage series that rises with it a month later. Add a linked effect on it so the migration's knock-on cost is in the same bank.
+  </Step>
   <Step title="Compare">
     Toggle the event's Active checkbox off, re-run, and compare against the run with it on — the difference is exactly the migration's projected impact.
   </Step>
@@ -102,3 +121,7 @@ Back on the indicator, set **Event banks to apply** to the bank(s) this forecast
     Govern a forecast the same way you govern any other artifact — catching a breach before it lands.
   </Card>
 </CardGroup>
+
+<Tip>
+  For a quick what-if in conversation rather than a versioned scenario, ask the FinOps Agent — see [What-if simulation](/reasoning-engine/what-if-simulation).
+</Tip>

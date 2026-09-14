@@ -74,10 +74,29 @@ A rule reads like a sentence. You author it in this order:
 | **N-way** | Splits equally across the receivers. | Each receiver shares equally. |
 | **Proportionate** | Splits by a driver metric — usage, seats, pod-hours, or revenue. | A usage metric should drive the split. |
 | **Replace** | Swaps coarse cost for finer-grained cost from a platform tool, to avoid double-counting. | A more granular source exists for the same resources. |
+| **AWS EKS/ECS split cost** *(predefined, AWS-only)* | Moves each EC2 instance's cost onto its EKS pod / ECS task rows using AWS's own per-pod usage shares, in place. | Container compute on AWS with Split Cost Allocation Data enabled. See below. |
 
 <Info>
-**Where recipients come from:** an inline table you type, the cost data itself (each distinct group becomes a recipient), or a business dataset.
+**Where recipients come from:** an inline table you type, the cost data itself (each distinct group becomes a recipient), or a business dataset. The predefined split-cost method needs none of these — its recipients are the pods and tasks AWS already reports.
 </Info>
+
+### AWS EKS/ECS split cost — a predefined method
+
+The strategies above are **Custom** rules: you select the cost and choose how to distribute it. A billing-account rule can instead be **Predefined**, applying a ready-made method to a known provider data shape. The one predefined method today is **AWS EKS/ECS split cost**, and it fixes the rule's scope to AWS.
+
+| | What AWS gives you | What StitcherAI adds |
+|---|---|---|
+| **Usage** | Split Cost Allocation Data reports, per EKS pod and ECS task, the share of its EC2 instance's CPU and memory it consumed. | Reads those shares as the distribution ratios — nothing for you to author. |
+| **Cost** | Stays on the instance's compute line; pod and task rows carry zero cost. | Moves each instance's cost onto its pod/task rows **in place**, conserving the bill exactly. |
+| **Identity** | Namespace, cluster, node, workload, pod name (EKS); cluster, service (ECS) live only in the split data. | Promotes the ones you tick into **FOCUS columns** you name, so Lookup, Mapping, and later allocations can group or filter on them. |
+
+It is the same **double-entry** model as every other allocation: the instance line receives a balancing negation, the pod and task rows receive the cost, and per instance and period the two net to zero. A split-cost rule always runs **first** in its billing-account level, so your Custom rules see cost already sitting on pods and tasks — for example, a Mapping from namespace to team, then a Proportionate allocation of the platform's remaining shared cost.
+
+<Note>
+**Prerequisite:** **Split Cost Allocation Data** must be enabled in **AWS Billing**, and the account must export **CUR 2.0**. Without the split data in the export, the rule cannot run. EKS is the mature path; ECS (cluster and service) is supported.
+</Note>
+
+Author one in [How to: Build an allocation](/how-to/build-an-allocation) — see the section **Split EKS/ECS shared cost to teams**.
 
 ### Scope and levels
 
@@ -95,20 +114,20 @@ A rule can run at one of three levels:
   </Card>
 </CardGroup>
 
-## Worked example: $100, end to end
+## Worked example: \$100, end to end
 
 <Steps>
   <Step title="Start with the providers">
-    $100 of cost arrives from two providers — **Cloud Corp ($70)** and **SaaS LLC ($30)**.
+    \$100 of cost arrives from two providers — **Cloud Corp (\$70)** and **SaaS LLC (\$30)**.
   </Step>
   <Step title="Attribute the shared service">
-    **Shared service A** is used by everyone and billed across both providers. It draws **$10 from each provider**, so $20 is first attributed to the shared service.
+    **Shared service A** is used by everyone and billed across both providers. It draws **\$10 from each provider**, so \$20 is first attributed to the shared service.
   </Step>
   <Step title="Allocate the shared service to the apps">
     Shared service A's cost is allocated onward to the apps that consumed it — **App 1** and **App 2** — alongside the cost those apps draw directly from the providers.
   </Step>
   <Step title="Every dollar lands on an app">
-    When the moves settle, the full $100 is attributed to apps: **App 1 ($60)** and **App 2 ($40)**. Each step posts its balancing negation and writes its rule and ratio into the **allocation status columns**, so the path is traceable and the totals still reconcile to the original bill.
+    When the moves settle, the full \$100 is attributed to apps: **App 1 (\$60)** and **App 2 (\$40)**. Each step posts its balancing negation and writes its rule and ratio into the **allocation status columns**, so the path is traceable and the totals still reconcile to the original bill.
   </Step>
 </Steps>
 

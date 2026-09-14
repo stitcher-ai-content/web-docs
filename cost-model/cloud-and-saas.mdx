@@ -1,0 +1,80 @@
+---
+title: "Cloud & SaaS cost management"
+description: "Cloud billing providers, data platforms, and SaaS/API providers arrive through native connectors and FOCUS exports; Commitment Discounts are reported from the billing feed, and AWS EKS/ECS split cost moves container spend onto the teams that consumed it."
+---
+
+Cloud and SaaS spend is the bulk of most technology bills, and it is the most structured input to the [cost model](/cost-model/overview). Native FOCUS exports pass straight through; older export formats and provider APIs are normalized to [FOCUS](/focus) with a per-provider mapping. This page describes what is covered by family; the named list is on [Supported integrations](/integrations).
+
+<Frame caption="Heterogeneous sources → one FOCUS-normalized, attributed table">
+  ![Heterogeneous sources → one FOCUS-normalized, attributed table](/images/fig-02-normalize-before-after.png)
+</Frame>
+
+## What's covered
+
+<AccordionGroup>
+  <Accordion title="Cloud billing providers" icon="cloud">
+
+    | Provider | Datasets | Retrieval |
+    |---|---|---|
+    | **AWS** | Cost & Usage Report (CUR and CUR 2.0), FOCUS export | File / blob storage (S3) |
+    | **Azure** | FOCUS billing export, MCA billing export | File / blob storage (Azure Storage) |
+    | **Google Cloud** | Billing export, FOCUS billing export | Database (BigQuery) or blob storage (GCS) |
+
+    A native FOCUS export is read as-is. CUR, MCA, and the Google billing export are converted to FOCUS.
+  </Accordion>
+  <Accordion title="Data platforms" icon="database">
+    - **Snowflake** — organization usage and cost, read from the database. The same connection can also serve business data.
+    - **Databricks** — usage report, read from the database. Currently being rolled out per organization.
+  </Accordion>
+  <Accordion title="SaaS and API providers" icon="plug">
+    **Twilio**, **Confluent Cloud**, **Elastic Cloud**, and **MongoDB Atlas** are each read through the provider's API and normalized to FOCUS with a per-provider mapping. Further SaaS connectors are being added.
+  </Accordion>
+  <Accordion title="Everything else — as an invoice" icon="file-pdf">
+    Vendors without a dedicated connector (for example Cloudflare, DigitalOcean, or GitHub) come in as PDF invoices or custom cost files. See [Custom & internal cost datasets](/cost-model/custom-and-internal). New providers are added without changing the model.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+FOCUS conversion already exists for **IBM Cloud** and **Oracle Cloud (OCI)**; connectors for them are coming soon.
+</Note>
+
+## Commitment Discounts
+
+Cloud commitment-discount instruments — **Reserved Instances**, **Savings Plans**, and **Committed Use Discounts** — arrive inside the billing feed in the FOCUS `CommitmentDiscount*` columns, populated on a best-effort basis to the extent the export carries them.
+
+| What you get | Where |
+|---|---|
+| Commitment-discount detail on each cost row (`CommitmentDiscountId`, `CommitmentDiscountType`, `CommitmentDiscountStatus`, and related columns) | The normalized cost model, after [Normalize](/model/normalize) |
+| Coverage and utilization against usage | The **Commitment-coverage report** indicator in [Generate](/build/generate-artifacts) |
+
+<Warning>
+**Commitment Discounts** are cloud discount instruments read from the billing feed. **[Contract Intelligence](/cost-model/contract-intelligence)** is a different construct: a signed vendor contract parsed from PDF into committed spend, Consumption, and reconciliation. The two are named apart throughout StitcherAI.
+</Warning>
+
+## Container cost — AWS EKS/ECS split cost
+
+AWS's **Split Cost Allocation Data** records each EKS pod's (or ECS task's) share of its parent instance's CPU and memory, but leaves the money on the instance's compute line. The **AWS EKS/ECS split cost** allocation method reads those native splits and:
+
+- moves each instance's cost onto its pod and task rows **in place**, conserving the bill total exactly;
+- balances every move with the same double-entry accounting as any other allocation;
+- can promote container identity — cluster, namespace, workload, deployment, pod name, ECS service — into FOCUS columns you name, so downstream rules can group and filter on them.
+
+<Info>
+**Prerequisite:** Split Cost Allocation Data must be enabled in AWS Billing and the export must be CUR 2.0. EKS is the production-validated path; ECS is supported with cluster and service dimensions.
+</Info>
+
+How allocation rules work, including this predefined method, is covered in [Allocate](/model/allocate); the step-by-step is in [Build an allocation](/how-to/build-an-allocation).
+
+## Next
+
+<CardGroup cols={3}>
+  <Card title="Supported integrations" icon="list" href="/integrations">
+    The named catalog of providers, datasets, and connectors.
+  </Card>
+  <Card title="Connections & credentials" icon="key" href="/connections-and-credentials">
+    Set up a cloud or SaaS connection with least-privilege access.
+  </Card>
+  <Card title="AI cost management" icon="microchip" href="/cost-model/ai-cost-management">
+    The next family of spend in the cost model.
+  </Card>
+</CardGroup>

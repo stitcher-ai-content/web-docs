@@ -1,9 +1,9 @@
 ---
 title: "Running & monitoring the pipeline"
-description: "The three ways to run your cost model — standard, scheduled, and debug runs — how to watch a run live on the run details page, and how to diagnose and fix a failed step."
+description: "The three ways to run your cost model — standard, scheduled, and debug runs — how to watch a run live, what the run statuses mean, and how to diagnose and fix a failure."
 ---
 
-A run executes your cost model end to end: it connects to your sources, normalizes and attributes the data, builds artifacts, evaluates governance, and delivers output. This page covers the three ways to run it, how to watch a run, and how to fix one that fails.
+A run executes your cost model end to end: it connects to your sources, normalizes and attributes the data, builds artifacts, evaluates governance, and delivers output. This page covers the three ways to run it, how to watch a run, how to read a failure, and the pipeline settings that govern production runs — [automatic retry and notifications](/retry-and-notifications) and [execution rules](/execution-rules).
 
 <Note>
 Looking for the hands-on version instead? [How to: Execute a pipeline](/how-to/execute-a-pipeline) walks through running a pipeline, watching it, and fixing a failure.
@@ -34,10 +34,12 @@ They differ only in **scope**, **where output goes**, and **whether governance a
     </Warning>
   </Tab>
   <Tab title="Scheduled run">
-    A standard run on a schedule you define, left to run unattended — this is normal production operation. It runs the full scope at each interval and takes no extra inputs; a scheduled run can't be named or put into debug mode, because the point is that it runs the same full model every time without anyone starting it.
+    A standard run on a schedule you define — daily, weekly, or monthly at a time you choose — left to run unattended. This is normal production operation. It runs the full scope at each interval and takes no extra inputs; a scheduled run can't be named or put into debug mode, because the point is that it runs the same full model every time without anyone starting it.
+
+    Because it runs unattended, scheduled runs are where [automatic retry](/retry-and-notifications#automatic-retry) matters most: when a provider's export hasn't landed yet, the run waits and tries again rather than failing for the day.
   </Tab>
   <Tab title="Debug run">
-    A scoped, low-cost run for validating a change **before it ships**. You narrow it three ways and run it against the branch you're working on (see [Authoring & version control](/authoring-and-version-control)):
+    A scoped, low-cost run for validating a change **before it ships**. You narrow it three ways and run it against the branch you're working on (see [Authoring & version control](/authoring/version-control)):
 
     <Steps>
       <Step title="Limit the period to a single day">
@@ -47,7 +49,7 @@ They differ only in **scope**, **where output goes**, and **whether governance a
         Run one provider, or a single data source within a provider. Business data still processes, because downstream steps depend on it.
       </Step>
       <Step title="Run only the stages you're changing">
-        Stop at a chosen stage, or resume from a recent debug session so you skip the stages you've already run. Start *at* the stage you're editing so your change actually executes.
+        Pick a **start stage** and an **end stage**. A new debug session always starts at Connect; a follow-up run can start at any stage the previous session completed, plus the next one. Model's sub-stages — **Prepare, Normalize, Enrich, Allocate** — are each valid start and end points, so you can resume at Enrich without re-running Normalize. Start *at* the stage you're editing so your change actually executes.
       </Step>
     </Steps>
 
@@ -62,11 +64,27 @@ Open a run on the **run details page** to watch it live.
 <Frame caption="The run details page: per-stage progress and failure logs">
   ![The run details page: per-stage progress and failure logs](/images/fig-16-run-details.png)
 </Frame>
-<Note>
-A pipeline runs **one run at a time**. Runs can be **named** — so a backfill is easy to find later — and **cancelled** from the run details page if you need to stop one.
-</Note>
 
 The page shows **per-stage and per-step progress**: which stage is running, which steps have completed, and which is in flight. (For what each stage does, see [How a pipeline is composed](/pipeline-overview).)
+
+<Note>
+A pipeline runs **one run at a time**. Runs can be **named** — so a backfill is easy to find later — and **cancelled** from the run details page if you need to stop one. A run that is waiting for an automatic retry counts as in progress: the pipeline waits until the retry completes or you cancel it.
+</Note>
+
+### Run statuses
+
+Alongside running, completed, failed, and cancelled, two statuses come from [automatic retry](/retry-and-notifications#automatic-retry):
+
+| Status | What it means | What happens next |
+|---|---|---|
+| **Retry scheduled** | The run stopped because expected data wasn't available yet, and a retry is booked for a later time. Not final. | StitcherAI starts the retry automatically at the scheduled time. Cancel the run to free the pipeline instead. |
+| **Precondition failed** | Expected data wasn't available and no retries remain (or retry is off). Final. | Read the [precondition-failure report](#the-precondition-failure-report), fix or wait for the data, then run again. |
+
+A retried run keeps the original's name and schedule and records which run it retried and the attempt number, so the sequence reads cleanly in the run list.
+
+### Sources marked Skipped
+
+A source can show as **Skipped** in the run graph for two reasons: it had no data for the period (the run still succeeds), or an [execution rule](/execution-rules) told the run to skip it. The rules applied to a run are recorded on the run itself, so you can tell which. A distinct label for rule-driven skips is coming.
 
 ## Diagnosing a failure
 
@@ -74,10 +92,10 @@ When a step fails, the run details page is also where you fix it.
 
 <Steps>
   <Step title="Open the failed step">
-    The failed step is marked, with its **error and logs** shown directly. Read the reason there — you don't go hunting for it.
+    The failed step is marked, with its **error and logs** shown directly. Read the reason there — you don't go hunting for it. If the failure is a missing-data precondition, you'll see a table instead of a raw error (below).
   </Step>
   <Step title="Fix the configuration">
-    Make the change in the [VS Code editor](/authoring-and-version-control) on your working branch.
+    Make the change in the [StitcherAI Editor](/authoring/version-control) on your working branch.
   </Step>
   <Step title="Re-run a scoped debug run">
     Re-run on just the relevant scope — the single day, the one source, the stages you changed — to confirm the fix cheaply.
@@ -88,13 +106,51 @@ When a step fails, the run details page is also where you fix it.
 </Steps>
 
 <Tip>
-A recent debug session keeps the work already done, so a follow-up debug run can **start from a stage you've already passed** instead of re-running everything. Iterate on the stage you're actually changing.
+A recent debug session keeps the work already done, so a follow-up debug run can **start from a stage you've already passed** instead of re-running everything. Restart points go down to Model's sub-stages — Prepare, Normalize, Enrich, Allocate — so iterate on exactly the stage you're changing.
 </Tip>
+
+### The precondition-failure report
+
+Some checks run before a source is processed — for example, that a business dataset has data for **every day in the period**. When a configured precondition fails, the run graph shows a **precondition table** so the failure tells you where and why:
+
+| Column | What it shows |
+|---|---|
+| **Precondition** | The kind of check — data exists, daily coverage, and so on |
+| **Name** | The source or dataset it was checked against |
+| **Status** | **Pass** · **Failed — data** (the data is missing) · **Failed — configuration** (the check itself is misconfigured) |
+| **Reason** | The reported reason; expand the row to see the **missing dates** |
+
+A precondition failure stops the run deliberately, before it produces partial output. It's also the one failure type [automatic retry](/retry-and-notifications#automatic-retry) can recover from — if retry is on, the run shows **Retry scheduled** rather than **Precondition failed** until attempts run out.
+
+## Governing production runs
+
+Three pipeline-level settings shape how production runs behave. None of them require editing the cost model.
+
+<CardGroup cols={3}>
+  <Card title="Automatic retry" icon="rotate-right" href="/retry-and-notifications#automatic-retry">
+    Off by default. When expected data isn't available yet, wait an interval and try again — up to a set number of attempts.
+  </Card>
+  <Card title="Run notifications" icon="bell" href="/retry-and-notifications#run-notifications">
+    Choose the run events, the notification groups (email, Slack, webhook), and the run types that notify. Toggle off per run.
+  </Card>
+  <Card title="Execution rules" icon="filter" href="/execution-rules">
+    Skip a provider or a source over a bounded window so the schedule keeps producing everything else. Outputs are partial for that window.
+  </Card>
+</CardGroup>
 
 ## Related
 
 <CardGroup cols={2}>
-  <Card title="Authoring & version control" icon="code-branch" href="/authoring-and-version-control">
+  <Card title="How to: Execute a pipeline" icon="play" href="/how-to/execute-a-pipeline">
+    The hands-on walkthrough — run, watch, and fix a pipeline.
+  </Card>
+  <Card title="Retry & notification settings" icon="sliders" href="/retry-and-notifications">
+    The two pipeline settings, their defaults, and the run statuses they introduce.
+  </Card>
+  <Card title="Execution rules" icon="filter" href="/execution-rules">
+    Narrow a production run without editing the model — and what that does to the output.
+  </Card>
+  <Card title="Authoring & version control" icon="code-branch" href="/authoring/version-control">
     The branch a debug run targets, and the author → debug → review loop.
   </Card>
   <Card title="Govern" icon="shield-check" href="/build/govern">
@@ -102,8 +158,5 @@ A recent debug session keeps the work already done, so a follow-up debug run can
   </Card>
   <Card title="How a pipeline is composed" icon="diagram-project" href="/pipeline-overview">
     The stages a run executes, Connect through Engage.
-  </Card>
-  <Card title="How to: Execute a pipeline" icon="play" href="/how-to/execute-a-pipeline">
-    The hands-on walkthrough — run, watch, and fix a pipeline.
   </Card>
 </CardGroup>

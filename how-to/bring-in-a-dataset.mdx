@@ -8,7 +8,7 @@ description: "Connect a cost or business data source so StitcherAI has data to m
 Building a comprehensive cost model is StitcherAI's core purpose — and that starts with your cost and usage data, from external providers and internal sources alike. Bringing in a dataset is how that data gets in. Once connected, it flows through the modeling process and becomes part of what StitcherAI produces: the artifacts you generate, the cost controls you run, and ultimately what reaches the people and AI agents across your organization.
 
 <Note>
-  This guide covers connecting a source once. For the full catalog of what can be connected — cloud billing, warehouses, SaaS and usage APIs, files, and PDFs — see [the data foundation](/data-foundation).
+  This guide covers connecting a source once. For the full catalog of what can be connected — cloud billing, warehouses, SaaS and usage APIs, AI vendors, files, and PDFs — see [Supported integrations](/integrations); for the concepts behind a connection, see [the data foundation](/data-foundation).
 </Note>
 
 ## Prerequisites
@@ -47,13 +47,26 @@ Everything below happens in the web app, before you ever open the authoring envi
   **Provider not in the list?** Select **custom cost dataset** instead of a named provider in step 2, then select and configure the connector the same way — the connector and configuration steps are identical whether the dataset is a listed provider or a custom one.
 </Tip>
 
+<Tip>
+  **Several datasets in one bucket or warehouse?** Create a **shared, multi-purpose source connection** instead: skip the dataset in step 2 and enter only the location and credentials, plus a representative path or table for validation. You then craft as many cost or business sources from it as you need in the editor, choosing each source's purpose there — see below.
+</Tip>
+
 ## Add the source — in the authoring environment
 
 With the connection saved and named, reference it from your pipeline configuration.
 
 <Steps>
-  <Step title="Craft a data source from the connection">
-    In the authoring environment, add a data source under **Connect** and point it at your connection **by name**. Choose the dataset — a cost dataset (cloud, SaaS, AI, vendor invoice) or a business dataset (ownership, headcount, budgets) — and its options.
+  <Step title="Add a data source under Connect">
+    In the StitcherAI Editor, add a data source under **Connect** and pick your connection **by name** from the source picker. Dedicated connections appear under **Cost** or **Business**; a shared, multi-purpose source connection appears under its own **Shared** group.
+  </Step>
+  <Step title="Choose cost or business">
+    For a dedicated connection the purpose is already fixed by its dataset. For a shared connection you declare it here: **cost** (spend, normalized to FOCUS) or **business** (context such as ownership, headcount, or budgets, joined to cost later).
+  </Step>
+  <Step title="For a cost source, choose the provider">
+    Name the **provider** and the schema — FOCUS or custom — so StitcherAI knows how to normalize it. A business source needs neither.
+  </Step>
+  <Step title="Set the source's options">
+    Add what is specific to this source — the folder or table within the shared location, and any options the dataset supports, such as the per-provider inputs described in [Connect](/connect/connect#per-provider-inputs-for-accurate-cost).
   </Step>
 </Steps>
 

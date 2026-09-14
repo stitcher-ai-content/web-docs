@@ -55,7 +55,7 @@ Business data brings the context that makes cost attributable — ownership, tea
 
 ## Preconditions — gate a run before it processes bad input
 
-A precondition is a **cheap, deterministic check** — no AI involved — that declares the shape data must have before the pipeline spends money working on it. When a precondition fails, that dataset is **skipped gracefully** instead of corrupting the model.
+A precondition is a **cheap, deterministic check** — no AI involved — that declares the shape data must have before the pipeline spends money working on it. When a precondition fails, the run **stops before it produces partial output**, and the run graph shows exactly which check failed and why — see [the precondition-failure report](/running-and-monitoring#the-precondition-failure-report). With [automatic retry](/retry-and-notifications) enabled, StitcherAI tries again later. A source that simply has no data for the period is skipped, not failed.
 
 <AccordionGroup>
   <Accordion title="Data exists" icon="list-check">

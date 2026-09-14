@@ -1,0 +1,127 @@
+---
+title: "Supported integrations"
+description: "The providers StitcherAI connects to today — cloud billing, warehouses and data platforms, SaaS and usage APIs, AI vendors, vendor invoices, business data, and destinations — how each is retrieved, and how to set up access."
+---
+
+StitcherAI ships connectors for the major cloud billing exports, data platforms, SaaS and usage APIs, and AI vendors, and ingests anything else as a vendor invoice or custom file. Every entry below is the same thing under the hood: a **dataset** (what the data is) paired with a **connector** (how it's retrieved) — see [Datasets, connectors & data connections](/data-foundation).
+
+<Info>
+This list is **representative, not exhaustive**. New providers are added without changing the model, and any provider not listed here can be brought in as a PDF invoice or custom cost file through [AI-powered ingestion](/ai-ingestion). For what you can do with the data once it's connected, see [the cost model](/cost-model/overview).
+</Info>
+
+## Cloud billing
+
+| Provider | What's ingested | How it's retrieved | FOCUS |
+|---|---|---|---|
+| **AWS** | Cost & Usage Report (CUR), CUR 2.0, FOCUS 1.2 export | File / blob storage (S3) | CUR converted; FOCUS 1.2 export read natively |
+| **Azure** | FOCUS billing export, MCA billing export | File / blob storage (Azure Storage) | FOCUS export native; MCA converted |
+| **Google Cloud** | Billing export, FOCUS billing export | Database (BigQuery) or blob (GCS) | Billing export converted; FOCUS export native |
+
+## Data warehouses & platforms
+
+| Provider | What's ingested | How it's retrieved | FOCUS |
+|---|---|---|---|
+| **Snowflake** | Organization usage & cost — also usable as a business-data source | Database (password or key-pair) | Converted; you supply your discount % |
+| **Databricks** | Usage report | Database (service principal) | Converted |
+
+## SaaS & usage APIs
+
+| Provider | What's ingested | How it's retrieved | FOCUS |
+|---|---|---|---|
+| **Twilio** | Usage & cost | Provider API | Converted |
+| **Confluent Cloud** | Usage & cost | Provider API | Converted; optional prepaid balance |
+| **Elastic Cloud** | Usage & cost (billed in ECU) | Provider API | Converted; you supply the ECU rate |
+| **MongoDB Atlas** | Invoices & usage | Provider API | Converted; optional discount % and prepaid balance |
+
+<Note>
+A few providers leave information out of their exports that FOCUS cost columns need — a negotiated discount, an ECU rate, a prepaid balance. You supply those small inputs on the source itself, in the Connect phase. See [Connect → Per-provider inputs](/connect/connect#per-provider-inputs-for-accurate-cost).
+</Note>
+
+## AI / LLM vendors
+
+| Provider | What's ingested | How it's retrieved | FOCUS |
+|---|---|---|---|
+| **OpenAI** | Organization cost and usage (completions, embeddings; further usage endpoints being added) plus billing | Provider API (Admin key) | Converted |
+| **Anthropic — Claude Platform** | Organization cost and usage, including Claude Code | Provider API (Admin key) | Converted |
+| **Anthropic — Claude Enterprise** | Per-seat analytics usage | Provider API (Analytics key) | Converted |
+
+For how AI spend is enriched beyond the vendor bill — by feature, team, or customer — see [AI cost management](/cost-model/ai-cost-management).
+
+## Vendor invoices & custom files
+
+| Source | What's ingested | How it's retrieved | FOCUS |
+|---|---|---|---|
+| **Any vendor — PDF invoice** | Invoice line items, from cloud, SaaS, or non-IT vendors | File / blob storage | Mapped by [AI-powered ingestion](/ai-ingestion); validated to FOCUS 1.2 |
+| **Any vendor — custom cost file** | CSV or Parquet in your own shape | File / blob storage | Mapped by AI-powered ingestion or a custom schema |
+
+Long-tail providers — for example Cloudflare, DigitalOcean, or Atlassian — come in this way today: **as invoices, not dedicated connectors**. The result lands in the same FOCUS columns as every other source.
+
+## Business data
+
+| Source | What's ingested | How it's retrieved | FOCUS |
+|---|---|---|---|
+| **Business-data file** | Ownership, teams, cost centers, headcount, budgets, revenue | File / blob storage, or stored alongside your configuration | Not normalized — joined to cost during enrichment and allocation |
+| **Business-data table** | The same, as a warehouse table | Database (Snowflake, BigQuery) | Not normalized |
+
+Business data is context, not spend, so it is never converted to FOCUS. You use it downstream to enrich cost, drive allocation, and measure KPIs — see [Connect → Business and reference data sources](/connect/connect#business-and-reference-data-sources).
+
+## Destinations
+
+| Destination | What's written | How it's delivered |
+|---|---|---|
+| **File export** | Curated FOCUS output as Parquet / CSV | Your storage bucket (S3, GCS, Azure Storage) |
+| **Warehouse export** | Curated FOCUS output as tables | Your warehouse |
+
+## Coming soon
+
+Connectors in progress. Each is named here so you know it's on the way; none is available yet.
+
+- **Temporal Cloud**, **Clumio**, **GitHub Enterprise** — dedicated connectors are in progress. Today these providers come in as invoices.
+- **Microsoft FOCUS 1.2** — support for Azure's FOCUS 1.2 export is in progress; the current Azure FOCUS export and MCA export are supported now.
+- **Oracle Cloud (OCI)** and **IBM Cloud** — FOCUS conversion is ready; the connectors that retrieve the exports are coming.
+
+<Note>
+**OpenRouter is not a cost source.** StitcherAI does not read OpenRouter billing. AI-vendor cost is ingested from each vendor directly, as listed above.
+</Note>
+
+## Setting up access
+
+Credentials are always entered in the **web app** — never in your configuration repository — and every connection is validated before use. Least-privilege access is provisioned with StitcherAI's public Terraform modules wherever they apply; the per-provider IAM detail lives there rather than on this page.
+
+<Card title="StitcherAI Terraform modules" icon="github" href="https://github.com/StitcherAI/tf-modules">
+  Per-provider setup modules — provision the access, then create the connection in the web app.
+</Card>
+
+<AccordionGroup>
+  <Accordion title="AWS, Azure, Google Cloud" icon="cloud">
+    Run the provider's module to provision read access to the export bucket, storage path, or BigQuery dataset — a cross-account role with an external id (AWS), an app identity with path-scoped storage roles and no stored secret (Azure), or a service account with BigQuery and storage read roles (Google Cloud). Then create the connection in the web app with the identity the module produced.
+  </Accordion>
+  <Accordion title="Snowflake" icon="snowflake">
+    Access is granted with least-privilege SQL — a user, role, and warehouse with read access to the organization usage views. Terraform cannot grant inside Snowflake, so this is a SQL template rather than a module. Authenticate with a password or a key pair.
+  </Accordion>
+  <Accordion title="Databricks" icon="database">
+    A service principal with read access to the usage report, provisioned with the module or entered directly in the web app.
+  </Accordion>
+  <Accordion title="SaaS & usage APIs · AI vendors" icon="key">
+    Create an API key in the provider's console with permission to read usage and cost — for OpenAI and the Claude Platform an **Admin key**, for Claude Enterprise an **Analytics key** — and enter it directly in the web app along with your organization id where the provider requires one.
+  </Accordion>
+  <Accordion title="Vendor invoices, custom files & business-data files" icon="file-invoice">
+    Read access to the bucket where the files land, provisioned with the module for that cloud's storage. One [shared, multi-purpose source connection](/data-foundation#a-shared-multi-purpose-source-connection) to that bucket can back both cost files and business files.
+  </Accordion>
+</AccordionGroup>
+
+The step-by-step — provision, create, validate, then craft sources — is in [Connections & credentials](/connections-and-credentials).
+
+## Next
+
+<CardGroup cols={3}>
+  <Card title="Connections & credentials" icon="key" href="/connections-and-credentials">
+    Define a connection safely and validate it before use.
+  </Card>
+  <Card title="How to: Bring in a dataset" icon="database" href="/how-to/bring-in-a-dataset">
+    Connect a source end to end, from provider access to the editor.
+  </Card>
+  <Card title="FOCUS" icon="layer-group" href="/focus">
+    The open cost language every source is normalized into.
+  </Card>
+</CardGroup>

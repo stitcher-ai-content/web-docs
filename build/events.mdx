@@ -1,6 +1,6 @@
 ---
 title: "Events"
-description: "Define named business events that feed forecasts — explainable with vs without events, comparable as what-if scenarios, and sharpened with business-driver signals."
+description: "Define named business events that feed forecasts — explainable with vs without events, comparable as what-if scenarios, and propagated through the cost series that move together."
 ---
 
 **Events** define named **event banks** — collections of described business changes and what-ifs (a launch, a migration, a contract change, a past anomaly) that **feed forecasts**. Toggling an event bank on or off lets you compare what-if scenarios side by side.
@@ -50,25 +50,44 @@ A forecast is explained by business reality, not opaque math.
 
 What-if analysis is simply toggling which events apply.
 
+<Tip>
+For a quick, conversational what-if — scale a service, swap an AI model, add a workload — without authoring an event, ask the **FinOps Agent**. See [What-if simulation](/reasoning-engine/what-if-simulation). Use event banks when you want a durable, versioned scenario that regenerates on every run.
+</Tip>
+
+## Correlated costs
+
+Cost series move together. When you scope an event to part of the model — a service category, a provider, an account — StitcherAI surfaces the **other cost series that have historically moved with it** in a **Correlated costs** panel beside the event, so one driver can propagate through the forecast.
+
+| The panel shows | Meaning |
+|---|---|
+| **Strength** | How closely the series has moved with your scoped cost — ranked strongest first. |
+| **Direction** | Whether the two move together or inversely, and which tends to lead. |
+| **Lead / lag** | Whether the correlated series tends to move before, with, or after the scoped series. |
+| **Per-dollar sensitivity** | Roughly how much the series has moved for every dollar the scoped series moved — a quick materiality check. |
+
+From the panel you can **add a linked effect**: a matching change on a correlated series, folded in as an extra scoped event. Linked effects are added **one at a time** — chain them when several series should follow the same driver.
+
+<Note>
+Relationships are computed from your own cost history and are a **ranking to guide you**, not a guarantee. Review the direction and lag before adding a linked effect.
+</Note>
+
 ## Improving accuracy
 
-Beyond cost history, a forecast can draw on correlated signals:
+Beyond cost history, a forecast can draw on further signals:
 
 <CardGroup cols={2}>
-  <Card title="Business-driver signals" icon="chart-mixed">
-    Headcount, customer count, transaction volume — series that move with cost.
-  </Card>
   <Card title="Calendar events" icon="calendar-days">
     Public holidays, fiscal year-end, and other recurring dates.
   </Card>
+  <Card title="External business-driver series" icon="chart-mixed">
+    Headcount, customer count, transaction volume — external series as forecast inputs. **Still maturing**; see below.
+  </Card>
 </CardGroup>
-
-These supplementary signals help a forecast track patterns that cost data alone wouldn't reveal.
 
 ## What's still maturing
 
 <Info>
-Some capabilities are in active development, and we'd rather be plain about it: the depth of **customer-authored event logic** (events are authored in natural language today), surfacing which **business-driver signals matter most**, and **confidence bands** on the projection. The forecasting capability continues to deepen.
+**Available today:** natural-language events, event banks, with-vs-without projections, impact summaries, and correlated-cost surfacing with linked effects. **Still maturing**, and we'd rather be plain about it: the depth of **customer-authored event logic**, **external business-driver series** (headcount, customer count, transaction volume) as forecast inputs, and **confidence bands** on the projection.
 </Info>
 
 ## Next
@@ -81,6 +100,6 @@ Some capabilities are in active development, and we'd rather be plain about it: 
     Back to the Indicator/KPI a forecast is built on.
   </Card>
   <Card title="How to: Build a forecast" icon="wand-magic-sparkles" href="/how-to/build-a-forecast">
-    The hands-on walkthrough — enable forecast and build an event bank end to end.
+    The hands-on walkthrough — enable forecast, build an event bank, and add a linked effect.
   </Card>
 </CardGroup>

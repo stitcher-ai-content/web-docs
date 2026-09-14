@@ -28,29 +28,29 @@
             ]
           },
           {
-            "group": "Getting Started",
+            "group": "Getting started",
             "pages": [
               "how-to/access-stitcherai",
+              "how-to/connect-via-mcp",
               "how-to/bring-in-a-dataset",
-              "how-to/attribute-cost",
-              "how-to/build-an-allocation",
-              "how-to/generate-an-artifact",
-              "how-to/build-a-forecast",
-              "how-to/build-a-cost-control",
               "how-to/execute-a-pipeline"
             ]
           },
           {
-            "group": "Security & Access",
+            "group": "The cost model",
             "pages": [
-              "access-and-administration",
-              "security"
+              "cost-model/overview",
+              "cost-model/cloud-and-saas",
+              "cost-model/ai-cost-management",
+              "cost-model/custom-and-internal",
+              "cost-model/contract-intelligence"
             ]
           },
           {
             "group": "The data foundation",
             "pages": [
               "data-foundation",
+              "integrations",
               "connections-and-credentials",
               "focus",
               "ai-ingestion"
@@ -94,17 +94,47 @@
             ]
           },
           {
-            "group": "AI spend & the reasoning engine",
+            "group": "Authoring",
             "pages": [
-              "managing-ai-spend",
-              "reasoning-engine"
+              "authoring/overview",
+              "authoring/set-up-the-editor",
+              "authoring/explore-your-data",
+              "authoring/forms-and-autocomplete",
+              "authoring/ai-chat",
+              "authoring/version-control",
+              {
+                "group": "Recipes",
+                "pages": [
+                  "how-to/attribute-cost",
+                  "how-to/build-an-allocation",
+                  "how-to/generate-an-artifact",
+                  "how-to/build-a-forecast",
+                  "how-to/build-a-cost-control"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "The reasoning engine",
+            "pages": [
+              "reasoning-engine",
+              "reasoning-engine/chargeback-and-erp",
+              "reasoning-engine/what-if-simulation"
             ]
           },
           {
             "group": "Operating StitcherAI",
             "pages": [
               "running-and-monitoring",
-              "authoring-and-version-control"
+              "execution-rules",
+              "retry-and-notifications"
+            ]
+          },
+          {
+            "group": "Security & Access",
+            "pages": [
+              "access-and-administration",
+              "security"
             ]
           }
         ]
@@ -136,6 +166,16 @@
       "source": "/",
       "destination": "/introduction",
       "permanent": false
+    },
+    {
+      "source": "/managing-ai-spend",
+      "destination": "/cost-model/ai-cost-management",
+      "permanent": true
+    },
+    {
+      "source": "/authoring-and-version-control",
+      "destination": "/authoring/version-control",
+      "permanent": true
     }
   ]
 }

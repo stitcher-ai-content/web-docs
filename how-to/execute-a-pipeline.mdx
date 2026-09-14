@@ -1,6 +1,6 @@
 ---
 title: "How to: Execute a pipeline"
-description: "Run your cost model as a standard, debug, or scheduled run, watch it live on the run details page, and fix a failure."
+description: "Run your cost model as a standard, debug, or scheduled run, watch it live on the run details page, read a precondition-failure report, and fix a failure."
 ---
 
 ## What this does, and why
@@ -22,7 +22,7 @@ Executing a pipeline runs your cost model through its stages — **Connect, Mode
     </Warning>
   </Tab>
   <Tab title="Debug run">
-    A scoped, low-cost run to validate a change **before it ships**, run against the [branch you're working on](/authoring-and-version-control). Narrow it three ways:
+    A scoped, low-cost run to validate a change **before it ships**, run against the [branch you're working on](/authoring/version-control). Narrow it three ways:
 
     <Steps>
       <Step title="Narrow the period">
@@ -32,24 +32,49 @@ Executing a pipeline runs your cost model through its stages — **Connect, Mode
         Run one provider, or a single data source within a provider. Business data still processes, because downstream steps depend on it.
       </Step>
       <Step title="Run only the stages you're changing">
-        Stop at a chosen stage, or resume from a recent debug session so you skip the stages you've already run. Start *at* the stage you're editing so your change actually executes.
+        Choose a **start stage** and an **end stage** from the stage picker. A first debug run always starts at Connect; once a debug session exists, the picker offers every stage it completed plus the next one — down to Model's sub-stages **Prepare, Normalize, Enrich, Allocate**. Start *at* the stage you're editing so your change actually executes.
       </Step>
     </Steps>
 
     A debug run writes to a **debug destination** rather than production, and **notifications are suppressed** — so you can iterate freely without touching live data or alerting anyone. Debug runs can be named, but can't be scheduled.
   </Tab>
   <Tab title="Scheduled run">
-    A standard run on a schedule you define, left to run unattended — this is normal production operation. It runs the full scope at each interval and takes no extra inputs; a scheduled run can't be named or put into debug mode, because the point is that it runs the same full model every time without anyone starting it.
+    A standard run on a schedule you define — daily, weekly, or monthly at a time you choose — left to run unattended. This is normal production operation. It runs the full scope at each interval and takes no extra inputs; a scheduled run can't be named or put into debug mode, because the point is that it runs the same full model every time without anyone starting it.
+
+    If a provider's export is sometimes late, turn on [automatic retry](/retry-and-notifications#automatic-retry) for the pipeline so the scheduled run waits and tries again instead of failing for the day.
   </Tab>
 </Tabs>
+
+## Invoke the run
+
+<Steps>
+  <Step title="Open the pipeline and choose Run">
+    From the pipeline's page in the web app, start a run and pick the run type. For a standard run, set the month range; for a debug run, set the day range, Scope, branch, and start/end stages as above.
+  </Step>
+  <Step title="Name it (optional)">
+    Give a standard or debug run a name so a backfill is easy to find later in the run list. Scheduled runs are named for you.
+  </Step>
+  <Step title="Decide whether this run should notify">
+    **Send notifications** follows the pipeline's [notification settings](/retry-and-notifications#run-notifications). Turn it off for this run only if you're watching it yourself — a backfill you're babysitting, for example. Debug runs suppress notifications regardless.
+  </Step>
+  <Step title="Start the run">
+    If an [execution rule](/execution-rules) is in effect for any provider, it's applied now and recorded on the run; the affected sources will show as **Skipped**.
+  </Step>
+</Steps>
 
 ## Watch the run
 
 Open the run on the **run details page** to watch it live. It shows **per-stage and per-step progress** — which stage is running, which steps have completed, and which is in flight.
 
+<Frame caption="The run details page: per-stage progress and failure logs">
+  ![The run details page: per-stage progress and failure logs](/images/fig-16-run-details.png)
+</Frame>
+
 <Note>
-  A pipeline runs **one run at a time**. Runs can be **named** — so a backfill is easy to find later — and **cancelled** from the run details page if you need to stop one.
+  A pipeline runs **one run at a time**. Runs can be **named** — so a backfill is easy to find later — and **cancelled** from the run details page if you need to stop one. A run in **Retry scheduled** counts as in progress; cancel it to free the pipeline.
 </Note>
+
+If the run stops because expected data isn't available yet and the pipeline has automatic retry on, the run shows **Retry scheduled** with the time of the next attempt. When attempts run out — or retry is off — it ends as **Precondition failed**. See [Run statuses](/running-and-monitoring#run-statuses) for what each means.
 
 ## Diagnose and fix a failure
 
@@ -60,15 +85,19 @@ When a step fails, the run details page is also where you fix it.
     The failed step is marked, with its **error and logs** shown directly. Read the reason there — you don't go hunting for it.
   </Step>
   <Step title="Fix the configuration">
-    Make the change in the [VS Code editor](/authoring-and-version-control) on your working branch.
+    Make the change in the [StitcherAI Editor](/authoring/version-control) on your working branch.
   </Step>
   <Step title="Re-run a scoped debug run">
-    Re-run on just the relevant scope — the narrowed period, the one source, the stages you changed — to confirm the fix cheaply.
+    Re-run on just the relevant scope — the narrowed period, the one source, the stages you changed — to confirm the fix cheaply. Pick the failed stage (or the sub-stage inside Model) as the start stage so you don't repeat what already passed.
   </Step>
   <Step title="Promote when it's clean">
     Once the debug run passes, merge your change and let a standard run (or the schedule) update production.
   </Step>
 </Steps>
+
+<Tip>
+  **Reading a precondition-failure report.** If the run failed a configured precondition — for example, a business dataset without data for every day in the period — the run graph shows a **precondition table** instead of a raw error. Check the **Status** column first: **Failed — data** means the data hasn't arrived (wait, or turn on automatic retry); **Failed — configuration** means the check itself needs fixing. Expand the row to see the exact **missing dates**. Details in [Running & monitoring](/running-and-monitoring#the-precondition-failure-report).
+</Tip>
 
 <Tip>
   A recent debug session keeps the work already done, so a follow-up debug run can **start from a stage you've already passed** instead of re-running everything. Iterate on the stage you're actually changing.
@@ -78,10 +107,18 @@ When a step fails, the run details page is also where you fix it.
 
 <CardGroup cols={2}>
   <Card title="Running & monitoring" icon="play" href="/running-and-monitoring">
-    The full concept — run types, the run details page, and diagnosing failures.
+    The full concept — run types, the run details page, run statuses, and diagnosing failures.
   </Card>
 
-  <Card title="Authoring & version control" icon="code-branch" href="/authoring-and-version-control">
+  <Card title="Retry & notification settings" icon="sliders" href="/retry-and-notifications">
+    Turn on automatic retry and choose who hears about which run events.
+  </Card>
+
+  <Card title="Execution rules" icon="filter" href="/execution-rules">
+    Skip a provider or source over a bounded window without editing the model.
+  </Card>
+
+  <Card title="Authoring & version control" icon="code-branch" href="/authoring/version-control">
     The branch a debug run targets, and the author → debug → review loop.
   </Card>
 </CardGroup>

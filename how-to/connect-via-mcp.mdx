@@ -1,0 +1,95 @@
+---
+title: "How to: Connect your AI tools (MCP)"
+description: "Add StitcherAI as a custom connector in your MCP-supported AI platform, sign in with your StitcherAI identity, select an environment, and start asking the FinOps Agent about your cost model."
+---
+
+## What this does, and why
+
+The [Reasoning Engine](/reasoning-engine) is available inside your own AI tools as the **FinOps Agent**. It connects over **MCP (Model Context Protocol)** — the open standard for attaching AI applications to external tools and data — so it works with any **MCP-supported AI platform** rather than through a separate integration per tool.
+
+Once connected, you ask in natural language and the agent answers from your live, FOCUS-normalized cost model:
+
+<CardGroup cols={3}>
+  <Card title="Cost questions" icon="magnifying-glass-chart">
+    Top services, spend by region or cost center, what's driving a change — over your FOCUS model.
+  </Card>
+  <Card title="Chargeback" icon="file-invoice-dollar" href="/reasoning-engine/chargeback-and-erp">
+    Chargeback by cost center, draft invoices, and submission to your ERP.
+  </Card>
+  <Card title="What-if simulation" icon="chart-line" href="/reasoning-engine/what-if-simulation">
+    Scale a service, add an AI workload, swap a model — with a paired critic review.
+  </Card>
+  <Card title="Connection setup" icon="plug">
+    List the environment's data sources and destinations, or set up a new connection.
+  </Card>
+  <Card title="Configuration generation" icon="code">
+    Draft pipeline configuration for you to review in the StitcherAI Editor.
+  </Card>
+  <Card title="Run status" icon="clock-rotate-left">
+    Check the state of the last pipeline run.
+  </Card>
+</CardGroup>
+
+<Note>
+MCP access is **enabled per organization by your StitcherAI administrator** and is being rolled out organization by organization. If the steps below don't work for you yet, ask your administrator whether it has been enabled for yours.
+</Note>
+
+## Connect
+
+<Steps>
+  <Step title="Confirm MCP is enabled for your organization">
+    Your administrator enables MCP access for the organization. You also need access to at least one environment in it — the same environment access you use in the web app at [app.stitcher.ai](https://app.stitcher.ai).
+  </Step>
+  <Step title="Add StitcherAI as a custom connector">
+    In your AI platform, open its connectors (or MCP servers) settings and add a **custom connector**. Name it **StitcherAI** and use this connector URL:
+
+    ```text
+    https://app.stitcher.ai/v1/mcp
+    ```
+
+    No keys or tokens are pasted here — authentication happens in the next step.
+  </Step>
+  <Step title="Sign in with your StitcherAI identity">
+    The platform opens a browser window to StitcherAI. Sign in exactly as you would to the web app — your organization's single sign-on — and approve the connection. This is standard **OAuth**: the agent then acts **under your credentials and permissions**, never a shared account.
+  </Step>
+  <Step title="Select your environment">
+    Start a conversation. The agent's first action is to list the environments you can access; tell it which one to use. The selection stays in place for the session, and you can switch at any time by asking.
+  </Step>
+</Steps>
+
+<Warning>
+Everything the agent can see and do is bounded by your own access. It reads only the environments you are entitled to, and it does not bypass your organization's authentication, authorization, or audit. See [Security](/security).
+</Warning>
+
+## Try it
+
+Start with one of these. Each ask maps to a capability of the agent:
+
+| Ask | What the agent does |
+|---|---|
+| "What were my top ten services by effective cost last month?" | Queries your FOCUS model — grouped by `ServiceName` on `EffectiveCost` — and returns a table. |
+| "Break down August AWS spend by region." | A filtered cost query over the same model. |
+| "Run the August chargeback by cost center." | Produces the chargeback report: direct cost, allocation in, allocation out, and net chargeback per cost center. See [Chargeback & ERP invoicing](/reasoning-engine/chargeback-and-erp). |
+| "Draft invoices for that chargeback and submit them to our ERP." | Generates one draft invoice per cost center and, on your go-ahead, submits them to your connected ERP. |
+| "What happens to spend if we grow our EKS usage 30% over six months?" | Runs a what-if simulation — baseline, scenario trajectory, and a paired critic review. See [What-if simulation](/reasoning-engine/what-if-simulation). |
+| "Which data connections are configured in this environment?" | Lists the environment's sources and destinations. See [Connections & credentials](/connections-and-credentials). |
+| "Generate the configuration to normalize this vendor's usage export." | Drafts pipeline configuration for you to review in the [StitcherAI Editor](/authoring/version-control). |
+| "What was the state of the last run?" | Reports the last pipeline run's status and any stage that failed. See [Running & monitoring](/running-and-monitoring). |
+
+<Tip>
+Answers are computed from your environment's data — the agent does not estimate from outside it. Longer queries run in the background; the agent reports progress and then presents the result.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="The reasoning engine" icon="brain" href="/reasoning-engine">
+    The agents behind the connector, and how they act on your model.
+  </Card>
+  <Card title="Chargeback & ERP invoicing" icon="file-invoice-dollar" href="/reasoning-engine/chargeback-and-erp">
+    From the allocated model to invoices in your ERP, in one conversation.
+  </Card>
+  <Card title="What-if simulation" icon="chart-line" href="/reasoning-engine/what-if-simulation">
+    Quick scenarios with a critic review — and when to use in-product events instead.
+  </Card>
+</CardGroup>

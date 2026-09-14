@@ -1,0 +1,71 @@
+---
+title: "Version control"
+description: "Version the cost model visually — branches, check-ins, and pull requests in VS Code's source-control panel; tags that pin a configuration version to its cost periods in the web app — no command line required."
+---
+
+The cost model is versioned in Git, but you work with it visually. Branching, check-in, and pull requests happen in **VS Code's source-control panel** inside the StitcherAI Editor; **tags** — which pin a configuration version to the cost periods it applies to — are managed in the **web app**.
+
+<Note>
+**No command line required.** Everything on this page happens in VS Code's source-control panel or the web app.
+</Note>
+
+## Branch, change, and review — in VS Code
+
+<Steps>
+  <Step title="Create a branch">
+    In the source-control panel, create a branch so your change is isolated from what's running.
+  </Step>
+  <Step title="Make the change">
+    Use [forms](/authoring/forms-and-autocomplete), the configuration text, or [AI chat](/authoring/ai-chat). The assistant sees your **uncommitted edits**, so you can iterate before checking anything in.
+  </Step>
+  <Step title="Check changes in">
+    Stage and commit ("check in") your edits with a message. Push when you're ready — **unpushed branches are fine**: chat and validation work on them too.
+  </Step>
+  <Step title="Validate the branch">
+    Run **Validate Configuration** for a rules check without a run, then a scoped [debug run](/running-and-monitoring) against the branch to see it execute on real data.
+  </Step>
+  <Step title="Open a pull request">
+    Open a pull request for peer review. Your repository's review and branch-protection rules apply — see [Access & administration](/access-and-administration).
+  </Step>
+</Steps>
+
+<Info>
+Opening the pull request from **inside the StitcherAI Editor** is coming soon. Until then, open it from the source-control panel's GitHub view or on GitHub.
+</Info>
+
+## Tags — in the web app
+
+A **tag** assigns a configuration version to the **cost period(s) it applies to**, so a historical run reproduces exactly. You manage tags in the web app, not in Git tooling.
+
+<Frame caption="Managing tags in the web app: assigning a configuration version to the cost periods it applies to">
+  ![Managing tags in the web app: assigning a configuration version to the cost periods it applies to](/images/fig-19-web-app-tags.png)
+</Frame>
+
+<Tip>
+Branching and review give the model software-grade change control; tags make past runs replayable. A [standard run](/running-and-monitoring) uses the tag to pick the right configuration for the period it processes.
+</Tip>
+
+## Who does what
+
+| Concern | Where |
+|---|---|
+| Branch · check in (commit) · pull request | VS Code source-control panel, in the editor |
+| Tag a configuration version to cost periods | Web app |
+| Review rules and branch protection | Your GitHub repository — see [Access & administration](/access-and-administration) |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Authoring overview" icon="pen-to-square" href="/authoring/overview">
+    Finance as Code, the two build modes, and what sign-in unlocks.
+  </Card>
+  <Card title="AI chat" icon="comments" href="/authoring/ai-chat">
+    The assistant works on your branch — including edits you haven't checked in.
+  </Card>
+  <Card title="Running & monitoring" icon="play" href="/running-and-monitoring">
+    Validate a branch with a debug run; tags drive standard runs.
+  </Card>
+  <Card title="Access & administration" icon="key" href="/access-and-administration">
+    The identity you sign in with, and the GitHub repository that holds your configuration.
+  </Card>
+</CardGroup>

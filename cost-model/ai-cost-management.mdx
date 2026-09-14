@@ -1,9 +1,17 @@
 ---
-title: "Managing AI spend"
-description: "AI spend runs through the same pipeline as every other cost. StitcherAI enriches it from each provider's APIs — breaking out input, output, and cached tokens and surfacing rates and cost per component — then joins telemetry to add the feature, team, and customer definition that makes AI unit economics real."
+title: "AI cost management"
+description: "AI spend is part of the cost model, not a separate tool. StitcherAI enriches it from each provider's APIs — breaking out input, output, and cached tokens and surfacing rates and cost per component — then joins telemetry to add the feature, team, and customer definition that makes AI unit economics real."
 ---
 
-AI spend flows through the same pipeline as any other cost — connected, normalized to [FOCUS](/focus), attributed, allocated, and built into [artifacts](/build/generate-artifacts) like a cloud bill or a SaaS invoice. The **model**, **workspace**, and **API key** already arrive in the data. What's distinctive is reaching *what the spend was for*. StitcherAI closes that gap in two steps.
+AI spend is one family of spend in the [cost model](/cost-model/overview). It flows through the same pipeline as any other cost — connected, normalized to [FOCUS](/focus), attributed, allocated, and built into [artifacts](/build/generate-artifacts) like a cloud bill or a SaaS invoice — so an AI provider's spend sits next to cloud and SaaS in the same chargeback, forecast, and KPIs.
+
+| Provider | What's ingested |
+|---|---|
+| **OpenAI** | Organization cost and usage, plus billing |
+| **Anthropic Claude Platform** | Organization cost and usage, including Claude Code |
+| **Claude Enterprise** | Per-seat usage |
+
+The **model**, **workspace**, and **API key** already arrive in the data. What's distinctive is reaching *what the spend was for*. StitcherAI closes that gap in two steps.
 
 <Steps>
   <Step title="Enrich from provider APIs">
@@ -17,6 +25,7 @@ AI spend flows through the same pipeline as any other cost — connected, normal
 <Frame caption="AI spend: provider-API enrichment, then telemetry for feature/team/customer definition">
   ![AI spend: provider-API enrichment, then telemetry for feature/team/customer definition](/images/fig-14-ai-spend-enrichment.png)
 </Frame>
+
 ## Step 1 — enrich from provider APIs
 
 The **model**, **workspace**, and **API key** are already in the provider's cost-and-usage data. Enrichment adds the deeper detail underneath those figures:
@@ -42,7 +51,7 @@ This is enrichment **to the extent the provider's data supports it** — the sam
 
 ## Step 2 — add definition with telemetry
 
-The definition that cost-and-usage data can't supply — *which feature, team, or customer drove the spend* — comes from **telemetry**: token- and trace-level usage emitted by your own AI applications. Joining telemetry to the enriched cost data is what makes AI unit economics real.
+The definition that cost-and-usage data can't supply — *which feature, team, or customer drove the spend* — comes from **telemetry**: token- and trace-level usage emitted by your own AI applications. Telemetry is the third input to the cost model, alongside cost and business data, and joining it to the enriched cost data is what makes AI unit economics real.
 
 With telemetry joined in, you can build artifacts that express AI as a business measure:
 
@@ -65,9 +74,14 @@ Once these measures exist, you can govern them like any other KPI — for exampl
 StitcherAI populates what the data supports and is explicit about what it can't manufacture. Provider data carries definition only so far; telemetry carries it further; definition that isn't present in the source is not invented. This is the same discipline applied to [FOCUS columns](/focus) elsewhere in the model.
 </Warning>
 
+## Next
+
 <CardGroup cols={2}>
-  <Card title="FOCUS — the open cost language" icon="table" href="/focus">
-    Guaranteed versus best-effort columns, and why StitcherAI never overstates the data.
+  <Card title="The cost model" icon="layer-group" href="/cost-model/overview">
+    How AI spend sits alongside cloud, SaaS, custom, and contract spend in one model.
+  </Card>
+  <Card title="Supported integrations" icon="plug" href="/integrations">
+    The AI providers available today and how each is connected.
   </Card>
   <Card title="Enrich" icon="user-tag" href="/model/enrich">
     How enriched AI cost is attributed to the teams that drove it.

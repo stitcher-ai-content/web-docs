@@ -1,0 +1,141 @@
+---
+title: "Contract Intelligence"
+description: "Contract Intelligence treats a signed vendor contract as a first-class cost source: StitcherAI parses the PDF into committed spend, term, rates, and discounts, tracks Consumption against the commitment, derives cost when there is no billing feed, and reconciles usage and invoices so nothing is counted twice."
+---
+
+**Contract Intelligence** treats a signed vendor agreement — a contract PDF — as a first-class source in the [cost model](/cost-model/overview). StitcherAI parses the contract into structured datasets (committed spend, term dates, rates, discounts) and models the vendor's **committed liability**: what was committed, how much has been consumed each month, the running balance, and a forward projection.
+
+It answers three questions:
+
+- **How much of the committed spend have we consumed?**
+- **Are we on track to use it before expiry?**
+- **Does the vendor's invoice match what we actually consumed?**
+
+## Contract Intelligence vs Commitment Discounts
+
+"Commitment" is an overloaded word. StitcherAI has two separate constructs and names them apart everywhere.
+
+| | **Contract Intelligence** | **Commitment Discounts** |
+|---|---|---|
+| What it is | A signed vendor agreement (a SaaS, data-platform, or API provider) parsed from PDF | Cloud provider discount instruments — Reserved Instances, Savings Plans, Committed Use Discounts |
+| Where the data comes from | The contract PDF, parsed into structured contract datasets | The FOCUS `CommitmentDiscount*` columns already in the billing feed |
+| What you get | Committed-liability curve, Consumption, invoice reconciliation, renewal/expiry | Coverage and utilization against usage |
+| Where it surfaces | The Contract intelligence source and the contract artifacts on this page | The Commitment-coverage report indicator in [Generate](/build/generate-artifacts); see [Cloud & SaaS](/cost-model/cloud-and-saas#commitment-discounts) |
+
+## How a contract becomes a source
+
+<Steps>
+  <Step title="Add a Contract intelligence source">
+    In the StitcherAI Editor, add a source of type **Contract intelligence** in Connect. Point it at the contract PDF in your file-based connection.
+  </Step>
+  <Step title="Describe what to extract">
+    Reference a short **parsing-instructions** note — a markdown file in your repository — that says what matters in this agreement: term, committed amounts, rates, discounts, renewal terms.
+  </Step>
+  <Step title="Parse into contract datasets">
+    StitcherAI parses the agreement into named **contract datasets** — a cost dataset plus supporting business datasets. They appear in the schema browser under Connect → Business like any other business data.
+  </Step>
+</Steps>
+
+## Deriving cost when there is no billing feed
+
+Some vendors bill only against the contract — there is no usage feed to connect. For that case you add a cost source that **derives from the contract**. It has no feed of its own; its FOCUS rows come from the parsed contract's cost dataset, under the provider name you assign.
+
+| Billing shape | How the contract is recorded |
+|---|---|
+| **Up-front** | A one-time `BilledCost` when the payment is due, and a monthly `EffectiveCost` burn-down across the term |
+| **Pay-as-you-go** | `BilledCost` and `EffectiveCost` recorded together each period |
+
+The contract's discount is the difference between `ListCost` and `ContractedCost` on the committed row, so the negotiated rate is visible in the model rather than lost in the invoice total.
+
+## Linking usage and invoices so nothing double-counts
+
+A live usage-based cost source — a Snowflake or Twilio feed, for example — can declare a **linked contract** and a **linked invoice** in its **Links** section.
+
+- When a usage feed is linked and active, the contract emits **no cost of its own**. It becomes intelligence-only — commitment and liability — so the same spend is never counted twice.
+- The linked invoice source is what invoice reconciliation compares against Consumption.
+
+## Consumption and reconciliation
+
+After the linked usage feeds are normalized, StitcherAI aggregates their billed and effective cost per month and reports it **back to the contract**. That monthly figure is **Consumption** — the amount the commitment draws down by.
+
+- An in-progress month is shown as **plan** and replaced by the **measured actual** once the month completes.
+- Consumption also feeds a forward forecast of contract usage, so the burn-down projects whether the commitment will be used before expiry. See [Events & forecasting](/build/events).
+
+<Note>
+**Consumption** is the working name for the drawn-down figure and its report; it is used consistently across the editor, the artifacts, and chat.
+</Note>
+
+## The contract artifacts
+
+Contract artifacts are built in [Generate](/build/generate-artifacts) like any other artifact.
+
+<AccordionGroup>
+  <Accordion title="Commitment burn-down" icon="chart-line">
+    Publishes the liability curve per contract: committed plan, Consumption, running balance, and forecast projection.
+
+    | Option | What it does |
+    |---|---|
+    | Contract selection | Which contract sources to include |
+    | Include contracts without cost | Show contracts that have no linked or derived cost yet |
+    | Month range | Full term by default, or a window |
+    | Include forecast | Add the forward projection |
+
+    **Currently in preview.**
+  </Accordion>
+  <Accordion title="Renewal/expiry tracker" icon="calendar-clock">
+    One row per contract: term end, days remaining, and an expiry state from thresholds you set (for example *expiring within 90 days*).
+
+    **Currently in preview.**
+  </Accordion>
+  <Accordion title="Invoice reconciliation" icon="scale-balanced">
+    Compares each invoice-linked source's invoiced cost against its Consumption for the billing month, for all invoice-linked sources or a named subset.
+
+    **Configurable in the editor today; the reconciliation results are coming soon.**
+  </Accordion>
+</AccordionGroup>
+
+Further contract artifacts — invoice audit, budget variance, and anomaly detection — are planned.
+
+## The contracts dashboard in chat
+
+In the editor's chat, and through the [FinOps Agent](/reasoning-engine) in your AI tools, a **contracts dashboard** renders inline: each contract's committed spend, Consumption to date, remaining balance, and time to expiry — the same figures the burn-down artifact publishes. Ask about a contract and the dashboard answers with the current position.
+
+## The doc-organizer on-ramp
+
+Getting contract and invoice PDFs into a file-based source is a filing job. The **doc-organizer** is a small local utility, delivered as a desktop extension for MCP-supported AI desktop apps, that does the filing for you and hands you the sync command.
+
+<Steps>
+  <Step title="Check status">
+    Confirm the source folder and the destination root the organizer will file into.
+  </Step>
+  <Step title="Scan">
+    The organizer reads each PDF and identifies the **vendor and period from the content**, not the filename.
+  </Step>
+  <Step title="Plan">
+    It proposes a filing plan: `contracts/<vendor>/<year>/<month>/` and `invoices/<vendor>/<year>/<month>/`.
+  </Step>
+  <Step title="Apply">
+    Copies are filed into the plan's folders. The originals are left in place, and the last apply can be undone.
+  </Step>
+  <Step title="Sync">
+    It prints the sync command (for example an S3 sync) that copies the organized folders to the landing bucket your file-based StitcherAI connection reads.
+  </Step>
+</Steps>
+
+<Info>
+The doc-organizer works on copies, handles PDFs only, and sends nothing over the network. Once the folders are in your bucket, a Contract intelligence source or a custom cost (PDF) source picks them up on the next run.
+</Info>
+
+## Next
+
+<CardGroup cols={3}>
+  <Card title="Cloud & SaaS cost management" icon="cloud" href="/cost-model/cloud-and-saas">
+    Commitment Discounts and the usage feeds a contract links to.
+  </Card>
+  <Card title="Custom & internal cost datasets" icon="file-import" href="/cost-model/custom-and-internal">
+    PDF invoices and custom cost files.
+  </Card>
+  <Card title="Generate artifacts" icon="cubes" href="/build/generate-artifacts">
+    Where the contract artifacts are built.
+  </Card>
+</CardGroup>

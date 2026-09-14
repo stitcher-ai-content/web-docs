@@ -1,0 +1,94 @@
+---
+title: "Custom & internal cost datasets"
+description: "Anything that costs money can be a cost dataset. Custom cost files, PDF invoices brought in with AI, and the business data that gives spend its context all enter the same FOCUS-normalized cost model."
+---
+
+Anything that costs money can be a cost dataset in the [cost model](/cost-model/overview). Internal IT — data-center, licensing, internal service charges — vendors without a dedicated connector, and one-off spend all enter as **custom cost datasets** and are normalized to [FOCUS](/focus) like a cloud bill. Business data arrives the same way and gives that spend its context.
+
+## Three ways in
+
+<CardGroup cols={3}>
+  <Card title="Custom cost file" icon="file-csv">
+    Parquet or CSV — already in FOCUS, or in your own column layout — read from file or blob storage.
+  </Card>
+  <Card title="PDF invoice" icon="file-pdf">
+    A vendor's invoice PDF — cloud, SaaS, or non-IT — mapped into FOCUS with AI-powered ingestion.
+  </Card>
+  <Card title="Business data" icon="sitemap">
+    Ownership, cost centers, headcount, revenue, budgets — as files, warehouse tables, or versioned in your repository.
+  </Card>
+</CardGroup>
+
+## Custom cost files
+
+You bring a custom cost file in through a **shared, multi-purpose source connection** to your storage account, then craft a cost source from it in the StitcherAI Editor. At the point of use you name the **provider** the spend belongs to and choose the **schema**:
+
+| Schema | When to use it | What happens |
+|---|---|---|
+| **FOCUS** | Your file already uses FOCUS columns | Rows pass through as-is |
+| **Custom** | Your file has its own column layout | You map your columns to FOCUS in the editor; the mapping is saved as part of your model |
+
+Rows carry the provider name you assign, so the vendor's spend groups, filters, and allocates like any other provider's.
+
+## PDF invoices
+
+A custom cost source also accepts **PDF**. Through chat in the editor, StitcherAI reads the invoice, proposes how to map it into FOCUS, shows a preview, and lets you refine before saving it as a source. Known vendors have dedicated invoice parsers; a general parser handles everyone else — including non-IT vendors. The full flow is on [AI-powered ingestion](/ai-ingestion).
+
+<Frame caption="Bring a PDF invoice into chat; StitcherAI proposes a FOCUS mapping to preview and refine">
+  ![Bring a PDF invoice into chat; StitcherAI proposes a FOCUS mapping to preview and refine](/images/fig-08-chat-ingest-pdf-to-focus.png)
+</Frame>
+
+<Tip>
+If you hold contract and invoice PDFs for many vendors, the **doc-organizer** utility files them into a vendor/year/month folder layout and gives you the sync command for your landing bucket. See [Contract Intelligence](/cost-model/contract-intelligence#the-doc-organizer-on-ramp).
+</Tip>
+
+## Business data
+
+Business data is not cost itself — it is the context the rest of the model runs on.
+
+| You bring | As | It is used to |
+|---|---|---|
+| Ownership, teams, cost centers | A file, a warehouse table (Snowflake, BigQuery), or a table versioned in your repository | [Enrich](/model/enrich) cost with the right owner and attribute it |
+| Headcount, seats, usage drivers | The same | Drive [allocation](/model/allocate) of shared cost |
+| Revenue, budgets, customer counts | The same | Give [KPIs](/build/generate-artifacts) a denominator and [forecasts](/build/events) a business driver |
+
+Datasets, connectors, and the shared connection you craft sources from are described on [Datasets, connectors & data connections](/data-foundation).
+
+## How custom cost lands in FOCUS
+
+<Note>
+Guaranteed FOCUS columns — billing and charge periods, billed and effective cost, provider, service, currency, charge category — are populated for every custom source. Best-effort columns are populated to the extent the file or invoice carries them. StitcherAI does not manufacture definition that isn't present in the source. See [FOCUS](/focus).
+</Note>
+
+A signed contract is the fourth way in: when a vendor has no billing feed, StitcherAI can derive its cost from the contract itself. See [Contract Intelligence](/cost-model/contract-intelligence).
+
+## Push your own data in
+
+Because you own your data, you can push it in from your own side. Customer-side push tools write **any cost dataset to your own storage** — your own keys, your own infrastructure — where a StitcherAI **file source** then reads it.
+
+<Steps>
+  <Step title="Run a push tool on your side">
+    A customer-side tool (for example, one that syncs an AI platform's usage, or one that files your contract and invoice PDFs) runs with **your credentials, in your environment**, and writes files to **your own bucket**.
+  </Step>
+  <Step title="Read it with a file source">
+    A StitcherAI file [data source](/connections-and-credentials) points at that storage and ingests the files like any other source — see [the data foundation](/data-foundation) and the [supported integrations](/integrations).
+  </Step>
+</Steps>
+
+<Info>
+Your credentials never leave your side. The push tool runs in your environment; StitcherAI only reads the resulting files from storage you own.
+</Info>
+
+## Next
+
+<CardGroup cols={3}>
+  <Card title="AI-powered ingestion" icon="wand-magic-sparkles" href="/ai-ingestion">
+    Bring → propose → preview → refine → save, for PDFs and custom files.
+  </Card>
+  <Card title="Bring in a dataset" icon="list-check" href="/how-to/bring-in-a-dataset">
+    The step-by-step for adding any source.
+  </Card>
+  <Card title="Contract Intelligence" icon="file-contract" href="/cost-model/contract-intelligence">
+    Turn a signed contract into a cost source.
+  </Card>
+</CardGroup>

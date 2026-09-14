@@ -55,11 +55,31 @@ You set StitcherAI as the **IT-Finance expert** in your AI platform, so spend-im
 The agents run under your credentials and policies; StitcherAI does not bypass your authentication, authorization, or audit. The full trust-boundary model is covered in [Security](/security).
 </Warning>
 
+## Connect it to your AI tools
+
+In your AI tools the Reasoning Engine appears as the **FinOps Agent**. Connecting takes a few minutes and no keys to copy:
+
+<Steps>
+  <Step title="Add StitcherAI as a custom connector">
+    In any **MCP-supported AI platform**, add a custom connector with the URL `https://app.stitcher.ai/v1/mcp`.
+  </Step>
+  <Step title="Sign in">
+    A browser window opens; sign in with your StitcherAI identity and approve the connection (standard OAuth).
+  </Step>
+  <Step title="Select an environment and ask">
+    Pick the environment to work in, then ask — cost questions, chargeback, what-if simulation, connection setup, configuration generation.
+  </Step>
+</Steps>
+
+<Note>
+MCP access is enabled per organization by your administrator and is being rolled out organization by organization. The full walkthrough, with example asks, is [How to: Connect your AI tools (MCP)](/how-to/connect-via-mcp).
+</Note>
+
 ## Under the hood: MCP
 
 The Reasoning Engine exposes itself as an **MCP (Model Context Protocol) server** — the open standard for connecting AI applications to external tools and data. Any MCP-compatible client can attach to it directly, which is what makes "reachable inside your own AI platforms" a protocol-level fact rather than a set of one-off integrations built and maintained per tool.
 
-Once connected, an AI platform gets a typed catalog of capabilities to call: querying the cost model directly (with guardrails such as dry-run confirmation before a large scan), running what-if simulations, managing data connections, and orchestrating the coordination, planning, and custom-cost agents described above. Each capability declares its own cost profile, so a lightweight lookup and a heavyweight simulation are governed — and rate-limited — differently rather than treated the same.
+Once connected, an AI platform gets a typed catalog of capabilities to call: querying the cost model directly (with guardrails such as dry-run confirmation before a large scan), running what-if simulations, generating chargeback and submitting it to an ERP, managing data connections, and orchestrating the coordination, planning, and custom-cost agents described above. Each capability declares its own cost profile, so a lightweight lookup and a heavyweight simulation are governed — and rate-limited — differently rather than treated the same.
 
 <Info>
 Because MCP is the transport, adding StitcherAI to a new AI platform is a matter of pointing an MCP-compatible client at the server — not building a bespoke integration for every tool your teams use.
@@ -74,17 +94,29 @@ The agents orchestrate multi-step workflows that span your systems — ERPs, ITS
     Pull, match, and reconcile invoices against the cost model — surfacing discrepancies rather than asking you to chase them by hand.
   </Accordion>
   <Accordion title="Run a what-if before committing capacity">
-    Simulate a change and review it — with the agent's plan and its critic's review in view — *before* you commit the capacity, so the decision is made before the commitment is.
+    Describe a change — grow a service, add an AI workload, swap a model — and the agent simulates it from your live FOCUS model: a baseline, the scenario's trajectory, and a **paired finance and FinOps critic review**, *before* you commit the capacity. It's the quick, conversational tier of what-if; durable, versioned scenarios live in [Events](/build/events). See [What-if simulation with the agent](/reasoning-engine/what-if-simulation).
   </Accordion>
   <Accordion title="Generate and submit a chargeback">
-    Build a chargeback [artifact](/build/generate-artifacts) and submit it onward to an ERP — generation and delivery driven end to end.
+    From the [allocated model](/model/allocate), the agent reports chargeback by cost center — direct cost + allocation in − allocation out = net chargeback — drafts one invoice per cost center with a line item per provider, and submits them to your ERP. Currently in preview, with Zoho Books as the first ERP with end-to-end submission. See [Chargeback & ERP invoicing](/reasoning-engine/chargeback-and-erp).
   </Accordion>
 </AccordionGroup>
 
 <Frame caption="An IT-Finance agent in your AI tool: a plan, live cost context, and a paired critic's review">
   ![An IT-Finance agent in your AI tool: a plan, live cost context, and a paired critic's review](/images/fig-15-reasoning-engine-in-workflow.png)
 </Frame>
+
+## Go deeper
+
 <CardGroup cols={2}>
+  <Card title="How to: Connect your AI tools (MCP)" icon="plug" href="/how-to/connect-via-mcp">
+    Add the connector, sign in, select an environment, and try example asks.
+  </Card>
+  <Card title="Chargeback & ERP invoicing" icon="file-invoice-dollar" href="/reasoning-engine/chargeback-and-erp">
+    Chargeback from the allocated model, draft invoices, and submission to your ERP.
+  </Card>
+  <Card title="What-if simulation with the agent" icon="chart-line" href="/reasoning-engine/what-if-simulation">
+    Scenarios, the critic review, and how it differs from in-product event forecasting.
+  </Card>
   <Card title="The two engines" icon="gears" href="/architecture-two-engines">
     How the Reasoning Engine and the Semantic Engine share one cost model.
   </Card>

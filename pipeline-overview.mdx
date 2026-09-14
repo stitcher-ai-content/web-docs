@@ -38,7 +38,7 @@ A pipeline is a set of **configurations** — one or more per stage. You author 
   </Card>
 </CardGroup>
 
-Configurations are kept in a version-controlled repository — see [Authoring & version control](/authoring-and-version-control). Each one refers to its data **sources and destinations by name**; the credentials themselves live in the web app, never in the repository (see [Connections & credentials](/connections-and-credentials)).
+Configurations are kept in a version-controlled repository — see [Authoring & version control](/authoring/overview). Each one refers to its data **sources and destinations by name**; the credentials themselves live in the web app, never in the repository (see [Connections & credentials](/connections-and-credentials)).
 
 <Note>
 **Order is honored where it matters.** Within a stage, configurations run in a defined order you control. This matters most in **Enrich** — where a lookup may depend on a column an earlier mapping created — and in **Allocate**, where a multi-level chain must run from the top down.
