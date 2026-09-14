@@ -96,6 +96,9 @@ It is the same **double-entry** model as every other allocation: the instance li
 **Prerequisite:** **Split Cost Allocation Data** must be enabled in **AWS Billing**, and the account must export **CUR 2.0**. Without the split data in the export, the rule cannot run. EKS is the mature path; ECS (cluster and service) is supported.
 </Note>
 
+<Frame caption="Before and after: instance compute cost moved in place onto its pod rows, with the instance line negated to zero.">
+  ![Before and after: instance compute cost moved in place onto its pod rows, with the instance line negated to zero.](/images/fig-42-split-cost-before-after.png)
+</Frame>
 Author one in [How to: Build an allocation](/authoring/recipes/build-an-allocation) — see the section **Split EKS/ECS shared cost to teams**.
 
 ### Scope and levels

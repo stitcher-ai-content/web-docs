@@ -150,6 +150,9 @@ On AWS, container compute is billed to the EC2 instance while the pods and tasks
   </Step>
 </Steps>
 
+<Frame caption="A billing-account allocation rule set to Predefined → AWS EKS/ECS split cost, with the EKS/ECS attribution-column checkboxes.">
+  ![A billing-account allocation rule set to Predefined → AWS EKS/ECS split cost, with the EKS/ECS attribution-column checkboxes.](/images/fig-41-allocation-rule-predefined-split-cost.png)
+</Frame>
 <Tip>
   EKS is the mature path; ECS (cluster and service) is supported. Cost that AWS reports as unused instance capacity stays on the instance line — allocate it onward with a Custom rule if your policy charges idle capacity to the platform's consumers.
 </Tip>

@@ -5,6 +5,9 @@ description: "Two pipeline settings for unattended production — automatic retr
 
 Two pipeline-level settings govern what happens when a production run needs attention. **Automatic retry** lets a run wait and try again when expected data hasn't arrived; **run notifications** tell the right people when a run fails, completes, or is waiting. Both are edited on the pipeline in the web app and are **off by default**.
 
+<Frame caption="The pipeline settings panel — automatic retry (attempts, interval, applies to) and run notifications (events, notification groups, run types)">
+  ![The pipeline settings panel — automatic retry (attempts, interval, applies to) and run notifications (events, notification groups, run types)](/images/fig-45-pipeline-run-settings.png)
+</Frame>
 <Info>
   A run uses the settings in force **when it starts**. Editing the pipeline's settings mid-run doesn't change a run already in flight; the next run picks up the change.
 </Info>
