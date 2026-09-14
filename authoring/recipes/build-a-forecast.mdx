@@ -1,0 +1,127 @@
+---
+title: "How to: Build a forecast"
+description: "Enable forecast on a Time series indicator from its base settings, then optionally sharpen it with named events — built by chat or directly — review correlated costs, and compare what-if scenarios by toggling them."
+---
+
+## What this does, and why
+
+[Forecasting](/pipeline/build/events) extends an Indicator/KPI forward using its own history and settings alone — no events required. This guide walks through enabling that base forecast, then optionally connecting named events to sharpen the projection with known business changes.
+
+<Note>
+  This assumes a Time series indicator already exists (see [How to: Generate an artifact](/authoring/recipes/generate-an-artifact)). This guide continues from the `effective_cost_by_team` indicator built there.
+</Note>
+
+## Enable forecast on the indicator
+
+Forecast settings live in the indicator's **Time settings** step, alongside date range and granularity.
+
+<Steps>
+  <Step title="Turn on Enable forecast">
+    Under **Date range**, check **Enable forecast**.
+  </Step>
+  <Step title="Set the forecast period">
+    Choose how far into the future the forecast extends — **One month**, **Three months**, **Six months**, or **One year**. The forecasted points are appended to the indicator after the last available date.
+  </Step>
+  <Step title="Set the look-back period">
+    Choose how much history trains the forecast — **Three months**, **Six months**, **One year**, or **All available data**. A longer period captures more seasonal patterns; a shorter one is more reactive to recent trends.
+  </Step>
+  <Step title="Optionally set a look-back cutoff date">
+    An explicit start date for the training data, overriding the look-back period — useful to exclude data from before a known infrastructure change or cost restructuring.
+  </Step>
+  <Step title="Optionally exclude partial months">
+    Turn on **Exclude partial month from training data** and set the **Minimum look_back months required** it depends on.
+  </Step>
+</Steps>
+
+The forecast is complete at this point — it projects forward from history alone.
+
+## Customize the forecast with events
+
+To sharpen the forecast with known business changes — a migration, a price change, a planned cutover — connect one or more event banks.
+
+Event banks live under **Build → Events**. Add one under **Custom** and give it an **Event bank name** — the name the indicator's Event banks to apply field references.
+
+<Tabs>
+  <Tab title="Describe it in chat">
+    Tell the assistant:
+
+    - **What** changes — for example, *"2% increase month over month in compute cost."*
+    - **When** it starts and stops — a date range, or a start date with no end.
+    - **Where** (optional) — which dimensions it affects, offered as the filter columns available on the indicator (for example `BillingAccountId`, `ChargeCategory`, `ProviderName`, `ServiceName`).
+
+    The assistant saves it as an event in the bank.
+  </Tab>
+  <Tab title="Add it directly">
+    Add an item to the bank's **Events** list and set its **Event name** and **Description**. Use **Active** to control whether it currently applies; reorder with the up/down controls or remove it with delete.
+  </Tab>
+</Tabs>
+
+Back on the indicator, set **Event banks to apply** to the bank(s) this forecast should account for.
+
+## Review correlated costs
+
+When an event is scoped to part of the model (a `ServiceCategory`, a `ProviderName`, a `BillingAccountId`), StitcherAI shows the other cost series that have historically moved with it.
+
+<Steps>
+  <Step title="Preview the event">
+    After saving a scoped event, open its preview. The **Correlated costs** panel appears beside it, ranked strongest first, with each series' direction, lead/lag, and per-dollar sensitivity.
+  </Step>
+  <Step title="Judge which relationships matter">
+    Look for a strong relationship, a direction that makes business sense, and a sensitivity large enough to move your forecast. Treat the list as a ranking to guide you, not a rule.
+  </Step>
+  <Step title="Optionally add a linked effect">
+    Choose **Add linked effect** on a correlated series. It is saved as an extra scoped event in the same bank, so toggling the driver's bank toggles the linked effect with it. Add linked effects one at a time; repeat for each series that should follow the driver.
+  </Step>
+</Steps>
+
+## Compare what-if scenarios
+
+<Steps>
+  <Step title="Toggle an event">
+    Turn an event's **Active** checkbox off to simulate without it, on to include it.
+  </Step>
+  <Step title="Or toggle a whole bank">
+    Add or remove a bank from the indicator's **Event banks to apply** to compare futures at the bank level — *with the migration* versus *without*.
+  </Step>
+  <Step title="Re-run and compare">
+    Re-run the pipeline (see [How to: Execute a pipeline](/getting-started/execute-a-pipeline)) — the regenerated forecast is shown [with vs without its events](/pipeline/build/events), so the effect of what you toggled is visible directly.
+  </Step>
+</Steps>
+
+## Worked example — forecasting effective cost by team through a migration
+
+<Steps>
+  <Step title="Enable forecast">
+    On the `effective_cost_by_team` indicator: Enable forecast on; forecast period **Six months**; look-back period **One year**; no cutoff date needed.
+  </Step>
+  <Step title="Build an event bank">
+    A Custom bank named `Migration scenarios`. In chat: what — "increase compute cost during the migration"; when — March 1, 2026 through June 30, 2026; where — `ServiceCategory` = Compute. Saved as event `Compute migration, Mar-Jun 2026`, Active on.
+  </Step>
+  <Step title="Apply it">
+    Set the indicator's Event banks to apply to `Migration scenarios`.
+  </Step>
+  <Step title="Review correlated costs">
+    The event's preview lists the series that historically move with Compute — say, a storage series that rises with it a month later. Add a linked effect on it so the migration's knock-on cost is in the same bank.
+  </Step>
+  <Step title="Compare">
+    Toggle the event's Active checkbox off, re-run, and compare against the run with it on — the difference is exactly the migration's projected impact.
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Events" icon="calendar-plus" href="/pipeline/build/events">
+    The full concept — business-driver/event-driven forecasting, explainability, and what-if scenarios.
+  </Card>
+  <Card title="How to: Generate an artifact" icon="cubes" href="/authoring/recipes/generate-an-artifact">
+    Back to building the indicator this forecast is enabled on.
+  </Card>
+  <Card title="How to: Build a cost control" icon="shield-check" href="/authoring/recipes/build-a-cost-control">
+    Govern a forecast the same way you govern any other artifact — catching a breach before it lands.
+  </Card>
+</CardGroup>
+
+<Tip>
+  For a quick what-if in conversation rather than a versioned scenario, ask the FinOps Agent — see [What-if simulation](/reasoning-engine/what-if-simulation).
+</Tip>

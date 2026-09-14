@@ -1,0 +1,109 @@
+---
+title: "Explore your data with the schema browser"
+description: "The schema browser shows what data exists at every stage of your pipeline — sources, columns by origin, allocation levels, Build artifacts, and where it all came from — without running anything."
+---
+
+The **schema browser** answers "what data do I have at this point in the pipeline?" It's a tree over the four stages — **Connect · Model · Build · Engage** — built from the same refreshed metadata that powers autocomplete, so the two always agree. Open it from the icon in the editor's top bar, beside the AI chat icon.
+
+<Note>
+The schema browser is available once you're signed in to the StitcherAI Editor — see [Set up the editor](/authoring/set-up-the-editor).
+</Note>
+
+## The header
+
+Right after sign-in the icon spins while metadata is retrieved. Once it finishes, the browser opens with three things at the top:
+
+| Element | What it does |
+|---|---|
+| **Metadata refreshed at [time]** · **Refresh** | When the metadata was last loaded; **Refresh** pulls it again after a run or a branch change |
+| **Filters** | Narrow the tree — for example to one provider or one origin |
+| Three entry points | **Browse by stage** · **Browse by data source** · **Browse by column** |
+
+<Frame caption="The schema browser icon while metadata is being retrieved, right after signing in">
+  ![The schema browser icon while metadata is being retrieved, right after signing in](/images/quickstart-schema-browser-updating.png)
+</Frame>
+
+<Frame caption="The schema browser once metadata has refreshed: browse by stage, by data source, or by column">
+  ![The schema browser once metadata has refreshed: browse by stage, by data source, or by column](/images/quickstart-schema-browser.png)
+</Frame>
+
+## Browse by stage — the four pillars
+
+<AccordionGroup>
+  <Accordion title="Connect — your sources" icon="plug">
+    Every data source, split into **Cost** and **Business**.
+
+    - A cost source shows its **provider**, its **connection**, and its columns.
+    - A business source shows its connection and columns — no provider, because business data isn't billed by anyone.
+    - A source the model declares but that has no connection behind it yet appears as **Unconfigured** — a prompt to finish setup in the web app.
+    - Vendor contracts brought in through [Contract Intelligence](/cost-model/contract-intelligence) appear under **Business**.
+  </Accordion>
+  <Accordion title="Model — columns after each sub-stage, and allocation levels" icon="layer-group">
+    Columns as they stand after **Prepare**, **Normalize**, and **Enrich** — so you can confirm what a Normalize step produced before you reference it in an Enrich rule.
+
+    **Allocate** is broken out by level, matching how [allocation](/pipeline/model/allocate) is layered:
+
+    | Level | What it holds |
+    |---|---|
+    | **Billing-account level** | Rules that move cost within one billing account |
+    | **Provider level** | Rules that move cost across accounts of one provider |
+    | **Cross-provider level** | Rules that move cost across providers |
+
+    Each level lists its rules and the **allocation status columns** they produce.
+  </Accordion>
+  <Accordion title="Build — the artifacts your model generates" icon="cubes">
+    The **indicators / KPIs**, **derived datasets**, and **controls** your Build stage generates — each with its **group**, **name**, and output columns. Use this to find exactly what to reference in a downstream artifact or in Engage. See [Generate artifacts](/pipeline/build/generate-artifacts).
+  </Accordion>
+  <Accordion title="Engage — what goes where" icon="paper-plane">
+    Destinations, and the artifacts routed to each. See [Engage](/pipeline/engage).
+  </Accordion>
+</AccordionGroup>
+
+<Frame caption="Browse by stage: the Build pillar's artifacts and the three allocation levels under Model → Allocate.">
+  ![Browse by stage: the Build pillar's artifacts and the three allocation levels under Model → Allocate.](/images/fig-31-schema-browser-build-and-allocation-levels.png)
+</Frame>
+## Browse by data source
+
+Sources grouped the way connections are configured:
+
+- **Cost** — one entry per cost source, by provider and connection.
+- **Business** — one entry per business source.
+- **Shared, multi-purpose source connections** — a connection you've crafted several sources from. Expand it to see each source, tagged **cost** or **business**. See [Datasets, connectors & data connections](/data-foundation/overview).
+
+## Columns grouped by origin
+
+Inside any source or stage, toggle **All · FOCUS · Custom**:
+
+| Origin | What's in it |
+|---|---|
+| **FOCUS** | The standard columns every normalized source shares — `BilledCost`, `EffectiveCost`, `ServiceName`, `ChargePeriodStart`, and the rest of [FOCUS](/data-foundation/focus) |
+| **Custom** | Columns your source brought that FOCUS doesn't define, plus columns your Enrich and Allocate rules added |
+
+Each column shows its **type** and, where known, the **stage that introduced it**.
+
+## Browse by column
+
+Look up any field across every source and stage. Type part of a name to see everywhere it appears — useful when two sources name the same concept differently, or to confirm a column exists before you filter on it.
+
+## Run provenance
+
+The metadata comes from a real run of your pipeline. The browser shows **which run** it came from and when, so you know how fresh what you're looking at is. If you've changed the model since, run a scoped [debug run](/operating/running-and-monitoring) against your branch and click **Refresh**.
+
+## Copy column names
+
+Any column — or a whole column list — copies to the clipboard as-is. Paste it into a SQL expression, a filter, or a chat message without retyping.
+
+## It stays in sync
+
+Switching **branch** or **environment** refreshes the metadata, so the browser never describes a branch you're no longer on. The same refreshed metadata drives [autocomplete](/authoring/forms-and-autocomplete) and what the [AI assistant](/authoring/ai-chat) knows about your data.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Forms & autocomplete" icon="list-check" href="/authoring/forms-and-autocomplete">
+    Use what you found — autocomplete offers exactly the columns the browser shows.
+  </Card>
+  <Card title="Datasets, connectors & data connections" icon="database" href="/data-foundation/overview">
+    Cost vs business datasets, and shared connections you craft sources from.
+  </Card>
+</CardGroup>

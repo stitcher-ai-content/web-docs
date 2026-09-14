@@ -1,0 +1,96 @@
+---
+title: "What-if simulation with the agent"
+description: "Describe a change — scale a service, add an AI workload, swap a model — and the FinOps Agent simulates it from your live FOCUS model with a baseline, a scenario trajectory, and a paired finance and FinOps critic review."
+---
+
+In your AI tool, you describe a change and the **FinOps Agent** simulates its effect on spend from your live FOCUS model — a **baseline summary**, the **scenario's trajectory** over the horizon you choose, and a **critic review** of the decision — in one conversation.
+
+This is the quick, agent-driven tier of what-if. The durable, versioned tier is in-product event forecasting under [Events](/pipeline/build/events); the two are compared [below](#two-tiers-of-what-if).
+
+<Note>
+Available through the [Reasoning Engine](/reasoning-engine/overview) in any MCP-supported AI platform — see [How to: Connect your AI tools (MCP)](/getting-started/connect-via-mcp).
+</Note>
+
+## Scenarios the agent can run
+
+<CardGroup cols={2}>
+  <Card title="Scale a service" icon="server">
+    *"Grow our EKS usage 30% over six months."*
+  </Card>
+  <Card title="Scale a category" icon="layer-group">
+    *"Compute up 20%, storage flat, through year-end."*
+  </Card>
+  <Card title="Add a new AI workload" icon="robot">
+    *"Add a customer-support assistant at roughly two million requests a month."*
+  </Card>
+  <Card title="Swap a model" icon="right-left">
+    *"Move our summarization workload from model A to model B."*
+  </Card>
+  <Card title="Grow AI traffic" icon="arrow-trend-up">
+    *"AI traffic grows 15% month over month for a year."*
+  </Card>
+</CardGroup>
+
+## How a simulation runs
+
+<Steps>
+  <Step title="Baseline summary">
+    The agent summarizes current spend from your FOCUS model — by service and by category — so the scenario starts from your real numbers, not a guess.
+  </Step>
+  <Step title="Scenario">
+    It applies the change you described over the horizon you asked for.
+  </Step>
+  <Step title="Critic review">
+    Two paired critics review the scenario before you see a recommendation (details below). Both verdicts are shown.
+  </Step>
+  <Step title="Scenario trajectory">
+    The projected month-by-month path versus the baseline, so you can see when and how much the change lands.
+  </Step>
+</Steps>
+
+## The critic review
+
+Every simulation is reviewed from two lenses before it reaches you. The two are meant to disagree when the decision is genuinely contested — that disagreement is the signal.
+
+<CardGroup cols={2}>
+  <Card title="Finance critic" icon="scale-balanced">
+    Should the business say yes to this spend? Cost minimization, margin impact, and contract-renewal risk — including whether a long horizon assumes today's pricing holds.
+  </Card>
+  <Card title="FinOps critic" icon="gears">
+    Is it operationally sound? Redundancy and resilience across vendors and regions, migration cost, quality and latency trade-offs, and whether existing commitments go to waste.
+  </Card>
+</CardGroup>
+
+<Info>
+The critics are a review aid, not a substitute for your approval. Each verdict lists its concerns so you can weigh them; nothing is committed on your behalf.
+</Info>
+
+## Two tiers of what-if
+
+StitcherAI offers what-if analysis in two places. Use the one that matches the decision.
+
+| | In-product event forecasting | Agent simulation |
+|---|---|---|
+| **Where** | [Build → Events](/pipeline/build/events), on an Indicator/KPI, in the StitcherAI Editor | The FinOps Agent in your AI tool |
+| **Mechanism** | Named **event banks** applied to a real indicator, shown with vs without events | Scenarios over the live FOCUS model, with a paired critic review |
+| **Result** | A **durable, versioned** forecast artifact that re-runs with every pipeline run | A **conversational** answer for the decision in front of you |
+| **Use it for** | Plans of record, budgets, governed forecasts you [control](/pipeline/build/govern) | Quick exploration before committing capacity or a vendor change |
+| **Get started** | [How to: Build a forecast](/authoring/recipes/build-a-forecast) | [How to: Connect your AI tools (MCP)](/getting-started/connect-via-mcp) |
+
+<Tip>
+Simulation results are not saved as artifacts. When a scenario is worth keeping — the migration you've decided to do, the launch that's now on the calendar — author it as an event in [Events](/pipeline/build/events) so the forecast carries it forward on every run.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Events" icon="calendar-plus" href="/pipeline/build/events">
+    Durable, explainable forecasts driven by named business events.
+  </Card>
+  <Card title="How to: Build a forecast" icon="chart-line" href="/authoring/recipes/build-a-forecast">
+    Enable forecast on an indicator and compare scenarios by toggling events.
+  </Card>
+  <Card title="Chargeback & ERP invoicing" icon="file-invoice-dollar" href="/reasoning-engine/chargeback-and-erp">
+    The other conversational capability — from the allocated model to your ERP.
+  </Card>
+</CardGroup>

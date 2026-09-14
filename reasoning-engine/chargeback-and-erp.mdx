@@ -1,0 +1,137 @@
+---
+title: "Chargeback & ERP invoicing"
+description: "Ask the FinOps Agent to turn your allocated model into a chargeback by cost center, draft one invoice per cost center, and submit the invoices to your ERP — currently in preview, with Zoho Books as the worked example."
+---
+
+From your AI tool, the **FinOps Agent** turns the [allocated model](/pipeline/model/allocate) into a **chargeback** — what each team owes — packages each cost center's share as a **draft invoice**, and **submits the invoices to your ERP**. One natural-language request drives the sequence end to end, and you approve before anything is submitted.
+
+<Note>
+**Preview.** Chargeback → ERP is delivered through the [Reasoning Engine](/reasoning-engine/overview) in your AI tools (see [How to: Connect your AI tools](/getting-started/connect-via-mcp)), not through a web-app screen, and is currently in preview. ERP-side submission is available for **Zoho Books** today, with other ERPs following.
+</Note>
+
+## Attribution, allocation, chargeback
+
+Three related terms, three different jobs. Chargeback consumes what the first two built.
+
+| Term | What it does | Where it happens |
+|---|---|---|
+| **Attribution** | Assigns each cost to the right party — team, product, cost center. | [Model → Enrich](/pipeline/model/enrich) |
+| **Allocation** | Distributes shared cost to its consumers — double-entry and multi-level, so totals still reconcile. | [Model → Allocate](/pipeline/model/allocate) |
+| **Chargeback** | Bills teams from the allocated model. | The FinOps Agent — this page |
+
+<Info>
+Chargeback reads the allocation status that Allocate records on every row of the model. If shared cost hasn't been allocated yet, the agent reports it as unowned rather than inventing a recipient — build the allocation first ([How to: Build an allocation](/authoring/recipes/build-an-allocation)).
+</Info>
+
+## The conversational flow
+
+<Steps>
+  <Step title="Ask for the chargeback">
+    *"Run the August chargeback by cost center."* The agent confirms the environment and the period, then reports one row per cost center.
+  </Step>
+  <Step title="Drill in where a number looks off">
+    *"Where does team-platform's number come from?"* The agent breaks one cost center down by provider — direct spend, cost allocated in, and credits allocated out.
+  </Step>
+  <Step title="Draft the invoices">
+    *"Draft invoices for that chargeback."* One draft invoice per cost center, with a line item per provider. Nothing leaves StitcherAI yet.
+  </Step>
+  <Step title="Submit to the ERP">
+    *"Submit them to our ERP."* The agent finds the ERP configured for your environment and the matching ERP connection in your AI platform, submits, and returns the ERP's invoice references.
+  </Step>
+</Steps>
+
+## How the report is built
+
+The agent can group chargeback three ways:
+
+<CardGroup cols={3}>
+  <Card title="By cost center" icon="building">
+    The primary report — one row per cost center, ready to invoice.
+  </Card>
+  <Card title="By billing account" icon="credit-card">
+    Each billing account treated as a cost center — useful before ownership tags are mature.
+  </Card>
+  <Card title="Provider lineage" icon="sitemap">
+    One cost center, provider by provider: direct spend, allocated in, credits allocated out.
+  </Card>
+</CardGroup>
+
+For every cost center the number decomposes the same way:
+
+| Component | Meaning |
+|---|---|
+| **Direct cost** | Spend the cost center incurred itself. |
+| **+ Allocation in** | Its share of shared cost distributed to it by Allocate. |
+| **− Allocation out** | Cost it originally carried that Allocate distributed to others. |
+| **= Net chargeback** | The invoiceable amount. |
+
+Two rules keep the report clean:
+
+- **Materiality threshold.** Cost centers below the threshold roll into a single *below materiality* line rather than receiving their own invoice.
+- **Unowned spend.** Cost with no owner lands in a default platform bucket for the FinOps team to resolve — it is never invoiced to a team by accident.
+
+<Tip>
+**Showback** is the same report without the invoicing step. Ask for it by name when you want to show teams their share without billing them.
+</Tip>
+
+## Draft invoices
+
+Each draft invoice carries:
+
+| Field | Value |
+|---|---|
+| Invoice number | Stable for the cost center and period, so a re-run doesn't create duplicates. |
+| Period | The month (or range) you asked for. |
+| Bill to | The cost center and its owner. |
+| Line items | **One per provider** — AWS, Azure, OpenAI, and so on — summing to the net chargeback. |
+| Status | **Draft** until you tell the agent to submit. |
+
+Below-materiality and unowned buckets are skipped; they are reported, not invoiced.
+
+## Submitting to your ERP — Zoho Books worked example
+
+<Steps>
+  <Step title="Discover the target">
+    The agent reads the ERP configured for your environment and looks for the matching ERP connection in your AI platform — for Zoho Books, your Zoho connector.
+  </Step>
+  <Step title="Create or match a contact per cost center">
+    Each cost center becomes (or is matched to) a Zoho **contact**, so invoices bill to the right party.
+  </Step>
+  <Step title="Create one invoice per cost center">
+    Each draft becomes a Zoho **invoice** against its contact, with the provider line items intact.
+  </Step>
+  <Step title="Review the summary">
+    The agent returns the Zoho invoice references and totals so you can open them in Zoho Books.
+  </Step>
+</Steps>
+
+<Note>
+**Other ERPs.** QuickBooks Online, NetSuite, Xero, Sage Intacct, Microsoft Dynamics 365 Finance, and Workday are recognized as ERP targets; ERP-side submission for them is coming soon. Until then the agent produces the draft invoices and a submission plan you can carry out yourself.
+</Note>
+
+## Chargeback here vs chargeback in Engage
+
+<CardGroup cols={2}>
+  <Card title="Through the FinOps Agent (this page)" icon="comments">
+    On demand, in conversation: report → draft invoices → ERP, with your approval at each step. Nothing is scheduled; nothing is stored as an artifact.
+  </Card>
+  <Card title="Through Build and Engage" icon="route" href="/pipeline/engage">
+    A chargeback table you [generate](/pipeline/build/generate-artifacts) as an artifact and deliver to destinations on every run — the durable, scheduled path.
+  </Card>
+</CardGroup>
+
+Both read the same allocated model, so the numbers agree.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Allocate" icon="sitemap" href="/pipeline/model/allocate">
+    The double-entry allocation that chargeback is built on.
+  </Card>
+  <Card title="How to: Connect your AI tools (MCP)" icon="plug" href="/getting-started/connect-via-mcp">
+    Connect the FinOps Agent before you run your first chargeback.
+  </Card>
+  <Card title="What-if simulation" icon="chart-line" href="/reasoning-engine/what-if-simulation">
+    The other conversational capability — scenarios with a critic review.
+  </Card>
+</CardGroup>

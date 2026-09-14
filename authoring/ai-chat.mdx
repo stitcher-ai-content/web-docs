@@ -1,0 +1,107 @@
+---
+title: "Author with AI chat"
+description: "Build the cost model conversationally — start from ready-made prompts, work side by side with an assistant that shows its plan as a checklist, sees your uncommitted edits, returns charts and forecasts, writes configurations, and validates without a run."
+---
+
+The StitcherAI Editor's AI chat sits **beside the configuration you're editing**. You describe the outcome; the assistant proposes the change, shows its plan as an inline checklist, and carries it out across as many stages as the change needs. It is the same [Reasoning Engine](/reasoning-engine/overview) you meet as the FinOps Agent in your AI tools — here its job is authoring, and it can see your configuration and your data metadata.
+
+<Note>
+AI chat is available once you're signed in — see [Set up the editor](/authoring/set-up-the-editor).
+</Note>
+
+## Start from the start page
+
+The **Welcome to StitcherAI** start page offers **Start a Chat** and a set of **use cases** — ready-made prompts that open a chat already framed for a goal: understand what's configured in your pipeline, model TCO for your organization, connect a new cost or business data source, and more.
+
+<Frame caption="The editor's start page: Start a Chat, and ready-made use cases to open a chat from">
+  ![The editor's start page: Start a Chat, and ready-made use cases to open a chat from](/images/quickstart-extension-login.png)
+</Frame>
+
+A real selection of starter prompts, grouped by goal:
+
+<AccordionGroup>
+  <Accordion title="Bring data in" icon="file-import">
+    - "Ingest a cloud cost dataset into my cost model"
+    - "Connect a new cost or business data source"
+  </Accordion>
+  <Accordion title="Forecast & simulate" icon="chart-line">
+    - "Add the ability to forecast a KPI configured in the pipeline"
+    - "Simulate the forecast based on a future event"
+    - "Explain a past anomaly event to improve my forecast"
+  </Accordion>
+  <Accordion title="Build artifacts" icon="cubes">
+    - "Build an artifact based on your cost model"
+  </Accordion>
+  <Accordion title="Govern & alert" icon="shield-check">
+    - "Alert when a cost control exceeds a threshold"
+    - "Alert when disallowed services and SKUs are used"
+  </Accordion>
+</AccordionGroup>
+
+## Side by side, with a plan you can see
+
+Chat opens in a panel beside your configuration. For anything beyond a question, the assistant first shows **its plan as an inline checklist** — each step ticked off as it completes — so you see and approve what it will do before it acts.
+
+It handles **multi-stage edits** in one go. Ask for a new allocation driver and it can add the Normalize change that produces the driver column *and* the allocation rule that uses it, checking each against its stage's rules.
+
+## It sees your work in progress
+
+| Behavior | What it means for you |
+|---|---|
+| Works against the **branch you have open** | Ask about *your* change, not the last published version |
+| Includes **edits you haven't committed yet** | Iterate in chat before you check anything in. On by default; a setting lets you turn it off |
+| Works on **branches you haven't pushed** | No need to publish a branch to get help on it |
+| A **branch change starts a fresh conversation** | The assistant never reasons about a stale branch |
+
+## What the assistant returns
+
+Beyond prose, the assistant answers with typed artifacts rendered inline in the chat:
+
+| Artifact | Example |
+|---|---|
+| **Chart** | Spend trend for a service category over the last twelve months |
+| **Table** | The events in an event bank, with period and description |
+| **Forecast** | A KPI projected forward, with and without the events you named |
+| **Correlated series** | Business series that move with a cost series, to inform a forecast |
+| **Impact summary** | What a simulated event does to the projection, in plain terms |
+| **Form** | A pre-filled configuration form for you to confirm |
+| **Configuration** | A new or changed configuration, written into the stage it belongs to |
+
+<Frame caption="Side-by-side chat: the assistant confirms an event bank as a table and returns a forecast with and without those events">
+  ![Side-by-side chat: the assistant confirms an event bank as a table and returns a forecast with and without those events](/images/fig-18-vscode-prompt-based-modeling.png)
+</Frame>
+
+## Configuration generation
+
+Ask for a source, an allocation rule, an indicator, or a control, and the assistant writes the configuration into the **right stage of the tree**, named and ordered correctly. You review it in the form or the text. It's an ordinary edit on your branch until you check it in — see [Version control](/authoring/version-control).
+
+<Tip>
+Autocomplete and the assistant share the same refreshed metadata, so a column the assistant references is one the [schema browser](/authoring/explore-your-data) shows. If the assistant can't find a column you expect, the step that produces it hasn't run yet.
+</Tip>
+
+## Saved prompts
+
+Prompts you reuse — a monthly chargeback question, a standard anomaly explanation, a validation pass — live in the **Chat Prompts** sidebar. Select one to start a chat with it.
+
+<Frame caption="The Chat Prompts sidebar: saved prompts you can start a chat from.">
+  ![The Chat Prompts sidebar: saved prompts you can start a chat from.](/images/fig-34-chat-prompts-sidebar.png)
+</Frame>
+## Validate without running
+
+Ask the assistant to **validate the configuration**, or click **Validate Configuration** in the left sidebar. The whole model is checked against the rules of each stage and the result lists what would fail — before you spend a run on it.
+
+<Frame caption="Validate Configuration: per-stage results without running the pipeline.">
+  ![Validate Configuration: per-stage results without running the pipeline.](/images/fig-35-validate-configuration-result.png)
+</Frame>
+Pair it with a scoped [debug run](/operating/running-and-monitoring) on your branch for a full check against real data.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Version control" icon="code-branch" href="/authoring/version-control">
+    Check in what the assistant built and open a pull request.
+  </Card>
+  <Card title="Build a forecast" icon="chart-line" href="/authoring/recipes/build-a-forecast">
+    The forecast-with-events flow shown above, step by step.
+  </Card>
+</CardGroup>

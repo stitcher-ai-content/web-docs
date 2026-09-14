@@ -1,0 +1,91 @@
+---
+title: "Set up the StitcherAI Editor"
+description: "Where the StitcherAI Editor runs, how sign-in works, and how it chooses your environment from the open repository — including what happens when none or several are linked, and how to switch."
+---
+
+The **StitcherAI Editor** is a VS Code extension. It runs in VS Code for the Web — the tab the web app opens for you — or in desktop VS Code, and it signs you in with the same identity you use for the web app. This page goes deeper than the one-time setup on where it runs, how sign-in behaves, and how an environment is chosen.
+
+<Info>
+Getting a StitcherAI account, GitHub access to your configuration repository, and opening the editor from the web app are covered step by step — with screenshots — in [How to access StitcherAI](/getting-started/access-stitcherai). Do that first if you haven't.
+</Info>
+
+## Where the editor runs
+
+<CardGroup cols={2}>
+  <Card title="VS Code for the Web (default)" icon="globe">
+    In the web app, open **Pipelines**, click the **GitHub icon** for your pipeline, and choose **Edit pipeline configuration**. A browser tab opens VS Code already pointed at your repository. Install the editor there — nothing on your machine.
+  </Card>
+  <Card title="Desktop VS Code" icon="laptop-code">
+    Install the [StitcherAI Editor](https://marketplace.visualstudio.com/items?itemName=StitcherAIInc.stitcherai-editor) from the **VS Code Marketplace** — search **StitcherAI** in the Extensions view — then open a clone of your configuration repository.
+  </Card>
+</CardGroup>
+
+<Frame caption="Installing the StitcherAI Editor from the Extensions view">
+  ![Installing the StitcherAI Editor from the Extensions view](/images/quickstart-stitcherai-extension-install.png)
+</Frame>
+
+<Tip>
+The editor checks for newer versions of itself and shows a banner when one is available. Turn on **Auto Update** for the extension so you stay current without thinking about it.
+</Tip>
+
+## Sign in
+
+<Steps>
+  <Step title="Open your repository first">
+    Sign in only **after** your configuration repository is the open folder. The editor uses that context to complete the sign-in loop and to choose your environment.
+  </Step>
+  <Step title="Click Log In">
+    On the editor's **Welcome to StitcherAI** start page, click **Log In** (also available from the account icon in the editor's top bar).
+
+    <Frame caption="The editor's start page: Log In in the top bar, with Start a Chat and ready-made use cases below">
+      ![The editor's start page: Log In in the top bar, with Start a Chat and ready-made use cases below](/images/quickstart-extension-login.png)
+    </Frame>
+  </Step>
+  <Step title="Sign in in the browser">
+    A browser tab opens the StitcherAI sign-in page. Use **the same identity as the web app** — your StitcherAI account, or your corporate identity if your organization uses single sign-on. The first time, confirm the prompt to **trust the domain**.
+  </Step>
+  <Step title="Return to VS Code">
+    The browser hands control back to VS Code. The account icon shows you're signed in and the schema browser icon spins while your metadata loads.
+  </Step>
+</Steps>
+
+To sign out, use the account icon in the top bar. Signing out returns the editor to a plain text view of the repository — the schema browser, autocomplete, and AI chat need a signed-in session.
+
+## How the editor chooses your environment
+
+The editor does not ask you to pick an environment from a list on every sign-in. It looks at the **repository you have open** and finds the environments you can access that are linked to it.
+
+| Repository state | What the editor does |
+|---|---|
+| **Exactly one** environment is linked | Selects it automatically and remembers it. No prompt. |
+| **Several** environments are linked — for example, a test and a production environment sharing one repository | Shows an environment picker. Choose the one you're authoring for. |
+| **None** linked | Shows a picker of the environments you can access. If it's empty, this repository isn't linked to any environment you have access to. |
+
+<Note>
+Empty picker? Confirm you opened the right repository, then check the environment's pipeline settings in the web app — an administrator links a repository to an environment there. See [Access & administration](/security/access-and-administration).
+</Note>
+
+## Switch environment
+
+Open the Command Palette (**Ctrl+Shift+P** on Windows/Linux, **Cmd+Shift+P** on Mac) and run **StitcherAI: Switch environment**, or use the account icon in the top bar. Pick the environment you want.
+
+The schema browser, autocomplete, and AI chat all follow the selected environment. Switching refreshes the metadata they draw on, so what you see next describes the environment you just chose.
+
+## Verify it worked
+
+- The start page shows **Start a Chat**, **Quick Start Guide**, and **Manage Pipeline**.
+- The schema browser icon spins, then the schema browser header reads **Metadata refreshed at [time]**.
+- Autocomplete offers columns and connections when you edit a configuration.
+
+If none of these appear, confirm the repository is still the open folder, then sign out and back in. The screenshots for each check are in [How to access StitcherAI](/getting-started/access-stitcherai#verify-it-worked).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Explore your data" icon="sitemap" href="/authoring/explore-your-data">
+    Open the schema browser and see what data you have at every stage.
+  </Card>
+  <Card title="AI chat" icon="comments" href="/authoring/ai-chat">
+    Start from a ready-made prompt on the start page.
+  </Card>
+</CardGroup>

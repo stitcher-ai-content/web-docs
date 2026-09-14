@@ -1,0 +1,149 @@
+---
+title: "Allocate"
+description: "Distribute shared-service cost — already attributed to the shared service — to the teams that consumed it: double-entry accounting, multi-level chains, and every distribution strategy."
+---
+
+**Allocate** is the last Model sub-stage. It distributes shared cost — a Kubernetes platform, an API gateway, an enterprise license billed centrally but used by many — to the teams, products, and departments that consumed it, using **double-entry accounting** so the dataset's totals always reconcile to the bill.
+
+<Note>
+Looking for the hands-on version instead? [How to: Build an allocation](/authoring/recipes/build-an-allocation) walks through authoring one rule end to end.
+</Note>
+
+## Double-entry accounting
+
+Allocation is where a cost model is most easily broken — move cost carelessly and totals stop matching the bill. StitcherAI prevents that with **double-entry accounting**.
+
+Every allocation posts two kinds of entry:
+
+<Steps>
+  <Step title="A balancing negation">
+    A negation posts against the source cost, reducing the central charge by exactly the amount moved.
+  </Step>
+  <Step title="Allocation entries to recipients">
+    One or more entries distribute that amount to the teams that consumed the service.
+  </Step>
+  <Step title="They net to zero">
+    The negation and the recipient entries **sum to zero net change**, so the dataset's totals still reconcile to the bill.
+  </Step>
+</Steps>
+
+The bill total is fixed; allocation only redistributes it. **Nothing is invented or lost — cost is only moved.** Because every move nets to zero, the allocated model reconciles to what providers actually charged, and you can trust the redistributed numbers as readily as the raw bill.
+
+<Frame caption="Double-entry allocation: a balancing negation plus recipient allocations net to zero">
+  ![Double-entry allocation: a balancing negation plus recipient allocations net to zero](/images/fig-09-double-entry-allocation.png)
+</Frame>
+## Multi-level allocations
+
+Real organizations are layered, and allocations chain to match. A shared-services cost is first **attributed** to the shared service (see [Enrich](/pipeline/model/enrich)), then **allocated** to its consumers — and those consumers may themselves be second-level shared services, allocated onward in turn.
+
+What keeps a chained allocation trustworthy is that every amount carries **allocation status columns**. They record, at each step:
+
+- whether a row is original cost, a negation, or an allocation;
+- which **rule** and **ratio** moved it;
+- its source-versus-destination status.
+
+So a multi-stage allocation is traceable end to end: you can follow exactly how each dollar flowed from origin to final owner, hop by hop, with no opaque step in between.
+
+## How an allocation rule is expressed
+
+A rule reads like a sentence. You author it in this order:
+
+<Steps>
+  <Step title="Scope">
+    Which providers or accounts the rule applies to.
+  </Step>
+  <Step title="Which cost to allocate">
+    Filters that select the rows, plus the **grouping** that summarizes them.
+  </Step>
+  <Step title="How to distribute it">
+    A distribution strategy (below).
+  </Step>
+  <Step title="The balancing negation">
+    Posted automatically against the source so the move nets to zero.
+  </Step>
+  <Step title="Overrides">
+    Optional adjustments to the resulting rows.
+  </Step>
+</Steps>
+
+### Distribution strategies
+
+| Strategy | What it does | When it's relevant |
+|---|---|---|
+| **Fixed** | Distributes by explicit ratios that sum to 100%. | You already know the split. |
+| **N-way** | Splits equally across the receivers. | Each receiver shares equally. |
+| **Proportionate** | Splits by a driver metric — usage, seats, pod-hours, or revenue. | A usage metric should drive the split. |
+| **Replace** | Swaps coarse cost for finer-grained cost from a platform tool, to avoid double-counting. | A more granular source exists for the same resources. |
+| **AWS EKS/ECS split cost** *(predefined, AWS-only)* | Moves each EC2 instance's cost onto its EKS pod / ECS task rows using AWS's own per-pod usage shares, in place. | Container compute on AWS with Split Cost Allocation Data enabled. See below. |
+
+<Info>
+**Where recipients come from:** an inline table you type, the cost data itself (each distinct group becomes a recipient), or a business dataset. The predefined split-cost method needs none of these — its recipients are the pods and tasks AWS already reports.
+</Info>
+
+### AWS EKS/ECS split cost — a predefined method
+
+The strategies above are **Custom** rules: you select the cost and choose how to distribute it. A billing-account rule can instead be **Predefined**, applying a ready-made method to a known provider data shape. The one predefined method today is **AWS EKS/ECS split cost**, and it fixes the rule's scope to AWS.
+
+| | What AWS gives you | What StitcherAI adds |
+|---|---|---|
+| **Usage** | Split Cost Allocation Data reports, per EKS pod and ECS task, the share of its EC2 instance's CPU and memory it consumed. | Reads those shares as the distribution ratios — nothing for you to author. |
+| **Cost** | Stays on the instance's compute line; pod and task rows carry zero cost. | Moves each instance's cost onto its pod/task rows **in place**, conserving the bill exactly. |
+| **Identity** | Namespace, cluster, node, workload, pod name (EKS); cluster, service (ECS) live only in the split data. | Promotes the ones you tick into **FOCUS columns** you name, so Lookup, Mapping, and later allocations can group or filter on them. |
+
+It is the same **double-entry** model as every other allocation: the instance line receives a balancing negation, the pod and task rows receive the cost, and per instance and period the two net to zero. A split-cost rule always runs **first** in its billing-account level, so your Custom rules see cost already sitting on pods and tasks — for example, a Mapping from namespace to team, then a Proportionate allocation of the platform's remaining shared cost.
+
+<Note>
+**Prerequisite:** **Split Cost Allocation Data** must be enabled in **AWS Billing**, and the account must export **CUR 2.0**. Without the split data in the export, the rule cannot run. EKS is the mature path; ECS (cluster and service) is supported.
+</Note>
+
+<Frame caption="Before and after: instance compute cost moved in place onto its pod rows, with the instance line negated to zero.">
+  ![Before and after: instance compute cost moved in place onto its pod rows, with the instance line negated to zero.](/images/fig-42-split-cost-before-after.png)
+</Frame>
+Author one in [How to: Build an allocation](/authoring/recipes/build-an-allocation) — see the section **Split EKS/ECS shared cost to teams**.
+
+### Scope and levels
+
+A rule can run at one of three levels:
+
+<CardGroup cols={3}>
+  <Card title="Billing account" icon="file-invoice">
+    Within a single billing account.
+  </Card>
+  <Card title="Provider" icon="cloud">
+    Across all of one provider's accounts together.
+  </Card>
+  <Card title="All providers" icon="globe">
+    The whole cost dataset together.
+  </Card>
+</CardGroup>
+
+## Worked example: \$100, end to end
+
+<Steps>
+  <Step title="Start with the providers">
+    \$100 of cost arrives from two providers — **Cloud Corp (\$70)** and **SaaS LLC (\$30)**.
+  </Step>
+  <Step title="Attribute the shared service">
+    **Shared service A** is used by everyone and billed across both providers. It draws **\$10 from each provider**, so \$20 is first attributed to the shared service.
+  </Step>
+  <Step title="Allocate the shared service to the apps">
+    Shared service A's cost is allocated onward to the apps that consumed it — **App 1** and **App 2** — alongside the cost those apps draw directly from the providers.
+  </Step>
+  <Step title="Every dollar lands on an app">
+    When the moves settle, the full \$100 is attributed to apps: **App 1 (\$60)** and **App 2 (\$40)**. Each step posts its balancing negation and writes its rule and ratio into the **allocation status columns**, so the path is traceable and the totals still reconcile to the original bill.
+  </Step>
+</Steps>
+
+<Frame caption="Worked example: $100 flows through two providers (Cloud Corp $70, SaaS LLC $30) and Shared service A ($10 from each) to App 1 ($60) and App 2 ($40) — every dollar attributed">
+  ![Worked example: $100 flows through two providers (Cloud Corp $70, SaaS LLC $30) and Shared service A ($10 from each) to App 1 ($60) and App 2 ($40) — every dollar attributed](/images/fig-10-allocation-sankey.png)
+</Frame>
+## Next
+
+<CardGroup cols={2}>
+  <Card title="How to: Build an allocation" icon="share-nodes" href="/authoring/recipes/build-an-allocation">
+    Author one allocation rule end to end, with a worked example.
+  </Card>
+  <Card title="Generate artifacts" icon="cubes" href="/pipeline/build/generate-artifacts">
+    Build KPIs, derived datasets, and chargebacks on top of the allocated model.
+  </Card>
+</CardGroup>

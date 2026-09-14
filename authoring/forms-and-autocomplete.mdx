@@ -1,0 +1,91 @@
+---
+title: "Author with forms and autocomplete"
+description: "Build configurations through per-stage forms with validation, and see what autocomplete draws on, what it offers field by field, and where it deliberately stays quiet."
+---
+
+Every configuration in the StitcherAI Editor renders as a **form** with the rules of its stage applied as you edit. Whether you fill in the form or edit the configuration text directly, **autocomplete** offers the columns, connections, and artifacts that actually exist for the environment and branch you're on.
+
+<Note>
+Autocomplete is available once you're signed in — see [Set up the editor](/authoring/set-up-the-editor). Signed out, you still get the forms, without suggestions.
+</Note>
+
+## Forms per configuration
+
+Open any item in the **Stages** tree and it opens as a form. Complex configurations are split into tabs — an allocation rule, for example:
+
+| Tab | What you set |
+|---|---|
+| **General configuration** | Name, description, whether the rule is active |
+| **Define the scope** | Which rows the rule considers |
+| **What cost to allocate** | The cost being moved, and the filter that isolates it |
+| **How to distribute the cost** | The **strategy**, whether to distribute on **cost data** or a **business dataset**, the **metric column**, and filter conditions |
+
+<Frame caption="An allocation rule open as a form: the distribution tab with strategy, metric column, and a SQL filter condition">
+  ![An allocation rule open as a form: the distribution tab with strategy, metric column, and a SQL filter condition](/images/fig-17-editor-logged-in.png)
+</Frame>
+
+- Required fields are marked with an asterisk; field help explains each option.
+- Lists offer valid values only — a strategy list holds the strategies that exist, a column field holds the columns that exist.
+- To add a configuration, right-click a stage in the tree and choose **Add new configuration**.
+- Within **Enrich** and **Allocate**, rules run in list order. Each is numbered (100, 200, 300…) so you can insert a rule between two existing ones.
+
+## Validation per stage
+
+Each stage has its own rules, applied as you edit:
+
+| Stage | Examples of what's checked |
+|---|---|
+| **Connect** | A source names a connection; a cost source names a provider and a schema |
+| **Model** | A Normalize step produces the guaranteed [FOCUS](/data-foundation/focus) columns; an allocation rule names a strategy and a metric column |
+| **Build** | An indicator names the artifact it builds from; a control names the indicator it evaluates and a threshold |
+| **Engage** | A delivery names a destination and the artifacts it sends |
+
+Problems appear **inline in the form** and as a **marker on the item** in the tree. **Validate Configuration** in the left sidebar checks the whole model at once, without running it — see [Validate without running](/authoring/ai-chat#validate-without-running).
+
+## What autocomplete draws on
+
+Autocomplete reads the **refreshed metadata** — the same source the [schema browser](/authoring/explore-your-data) shows you:
+
+- the FOCUS schema, and the columns present in each of your sources **at each stage**;
+- the artifacts your Build stage produces — their groups, names, and columns;
+- the data connections configured for the selected environment, plus connections already referenced in your model.
+
+It refreshes when you sign in, switch environment or branch, or click **Refresh** in the schema browser.
+
+## What it offers, field by field
+
+| Where you're typing | What autocomplete suggests |
+|---|---|
+| A **column** field — filter, metric, group-by, SQL expression | Columns available **at that stage**, FOCUS and custom, each with its type |
+| A dedicated **cost-source** connection field | Connections carrying a cost dataset, for the relevant provider |
+| A dedicated **business-source** connection field | Connections carrying a business dataset |
+| A **shared, multi-purpose source connection** field | Only shared connections. You then declare whether the source you craft from it is **cost** or **business** — and, for cost, its **provider** and schema |
+| An **artifact** reference — in a downstream artifact or in Engage | Artifacts by group and name |
+
+<Tip>
+Pickers that list connections show **Cost**, **Business**, and **Shared** sections. A shared connection starts unselected and asks you to choose cost or business before it will save — the choice is what tells the pipeline how to treat the data. See [Datasets, connectors & data connections](/data-foundation/overview).
+</Tip>
+
+## Where it deliberately stays quiet
+
+Autocomplete is designed to suggest only what fits, so an empty list is information:
+
+- **Signed out, or before metadata has refreshed** — nothing to suggest yet. Sign in, or wait for **Metadata refreshed at [time]**.
+- **A cost-only field never offers a business source**, and vice versa. A provider-bound field offers only that provider's connections.
+- **It suggests only columns that exist in the metadata.** It won't propose a column because the name looks plausible. If a column you expect is missing, the step that should create it hasn't been run yet — run a scoped [debug run](/operating/running-and-monitoring) against your branch and refresh.
+- **Column-name collisions are flagged, not resolved silently.** When two sources or steps would produce the same column name, autocomplete warns you so you can rename or disambiguate.
+
+## Direct configuration gets the same help
+
+Prefer to edit the configuration text? The same suggestions appear as you type, and the same per-stage validation runs. Switch between the form and the text whenever you like — they edit the same file.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="AI chat" icon="comments" href="/authoring/ai-chat">
+    Describe the outcome and let the assistant write the configuration into the right stage.
+  </Card>
+  <Card title="Build an allocation" icon="scale-balanced" href="/authoring/recipes/build-an-allocation">
+    A full walk through an allocation rule's form.
+  </Card>
+</CardGroup>

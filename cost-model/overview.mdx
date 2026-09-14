@@ -1,0 +1,67 @@
+---
+title: "The cost model"
+description: "StitcherAI models the total cost of technology — cloud, SaaS, AI, internal and custom spend, and signed vendor contracts — in one FOCUS-normalized cost model built from cost, business, and telemetry data."
+---
+
+StitcherAI models the **total cost of technology**. Cloud bills, SaaS and API usage, AI-provider spend, internal and custom cost, and signed vendor contracts all land in **one cost model**, normalized to [FOCUS](/data-foundation/focus). A team's cost is the sum of everything it consumes across every kind of spend — not one provider's bill in isolation.
+
+<Frame caption="One cost model: cloud, SaaS, AI, custom, and contract spend, built from cost, business, and telemetry data, normalized to FOCUS.">
+  ![One cost model: cloud, SaaS, AI, custom, and contract spend, built from cost, business, and telemetry data, normalized to FOCUS.](/images/fig-20-cost-model-overview.png)
+</Frame>
+## Three inputs build the model
+
+<CardGroup cols={3}>
+  <Card title="Cost data" icon="file-invoice-dollar">
+    Cloud billing exports, SaaS/API usage feeds, AI-provider cost and usage, custom cost files, PDF invoices, and parsed contracts. Every row is normalized to FOCUS.
+  </Card>
+  <Card title="Business data" icon="sitemap">
+    Ownership, teams, cost centers, headcount, revenue, budgets. The context that attributes spend, drives allocation, and gives KPIs a denominator.
+  </Card>
+  <Card title="Telemetry" icon="wave-square">
+    Usage emitted by your own applications — used primarily for [AI cost management](/cost-model/ai-cost-management): token- and trace-level AI usage that a bill cannot carry, revealing which feature, team, or customer drove the spend.
+  </Card>
+</CardGroup>
+
+Every input flows through the same [pipeline](/pipeline/overview): **Connect → Model → Build → Engage**. A source is normalized to FOCUS, [attributed and allocated](/pipeline/model/allocate), built into [artifacts](/pipeline/build/generate-artifacts), [governed](/pipeline/build/govern), and delivered. Nothing about the pipeline changes because a source is a contract rather than a cloud bill.
+
+## Why one model rather than five
+
+| Because spend shares one model… | …you get |
+|---|---|
+| Every row carries the same FOCUS columns | Costs that are **comparable across providers** |
+| Allocation rules see every kind of spend | A SaaS invoice and cloud compute both land on `team-platform` and reconcile to the same total |
+| Artifacts are built over the whole model | **One chargeback, one forecast base, one set of KPIs** spanning cloud, SaaS, AI, and contracts |
+
+<Note>
+Each source is populated to the extent its data supports — the guaranteed-versus-best-effort discipline described in [FOCUS](/data-foundation/focus). StitcherAI does not manufacture definition that isn't present in the source.
+</Note>
+
+## What you can model
+
+<CardGroup cols={2}>
+  <Card title="Cloud & SaaS cost management" icon="cloud" href="/cost-model/cloud-and-saas">
+    Cloud billing providers, data platforms, SaaS/API providers, Commitment Discounts, and EKS/ECS split cost.
+  </Card>
+  <Card title="AI cost management" icon="microchip" href="/cost-model/ai-cost-management">
+    AI-provider cost enriched from provider APIs, then joined to telemetry for feature, team, and customer definition.
+  </Card>
+  <Card title="Custom & internal cost datasets" icon="file-import" href="/cost-model/custom-and-internal">
+    Custom cost files, PDF invoices brought in with AI, and the business data that gives spend its context.
+  </Card>
+  <Card title="Contract Intelligence" icon="file-contract" href="/cost-model/contract-intelligence">
+    Signed vendor contracts as a source of committed spend, Consumption tracking, and invoice reconciliation.
+  </Card>
+</CardGroup>
+
+<CardGroup cols={2}>
+  <Card title="Supported integrations" icon="plug" href="/data-foundation/integrations">
+    The named list of providers, datasets, and connectors available today.
+  </Card>
+  <Card title="Datasets, connectors & data connections" icon="table" href="/data-foundation/overview">
+    The building blocks every source is made of.
+  </Card>
+</CardGroup>
+
+<Frame caption="StitcherAI: two engines on one data foundation">
+  ![StitcherAI: two engines on one data foundation](/images/fig-01-system-of-intelligence.png)
+</Frame>

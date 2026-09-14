@@ -1,0 +1,108 @@
+---
+title: "Execution rules"
+description: "Skip a provider or a specific data source over a bounded window so production runs keep producing everything else — and understand what that does to the output."
+---
+
+An **execution rule** is the supported way to narrow what a production run processes without editing the cost model. It tells StitcherAI to skip a **provider** — or a specific **data source** within it — over a bounded window, so your schedule keeps producing every other source while one is unavailable, delayed, or under repair.
+
+<Warning>
+  An execution rule changes what a production run produces. **Outputs for the affected billing months are partial** until the source is processed again — every artifact, allocation, and chargeback built on those months reflects the gap. Disable the rule and run again once the source is available.
+</Warning>
+
+## When to use one
+
+| Situation | Without a rule | With a rule |
+|---|---|---|
+| A provider's export for the month is not published yet | The scheduled run fails on that provider — or, with [automatic retry](/operating/retry-and-notifications#automatic-retry) on, waits and retries | Skip that provider for the month; everything else lands on schedule |
+| A source's credentials or location are being repaired | Every run fails at Connect until the fix lands | Skip the source while you fix it |
+| One source is flaky and you'd rather tolerate it than block the run | An intermittent failure stops the whole run | **Skip on error** lets the run continue when that source fails |
+
+Execution rules are for **production runs**. To test a change on a narrower set of data, use a [debug run](/operating/running-and-monitoring#the-three-run-types) with Scope instead — it doesn't touch production.
+
+## Rule types
+
+<CardGroup cols={2}>
+  <Card title="Skip extraction" icon="forward">
+    The source is **not read at all** while the rule is in effect. Use when the source is known to be down or its data for the period isn't published yet.
+  </Card>
+  <Card title="Skip on error" icon="shield-halved">
+    The source **is attempted**; if extraction fails, the run skips it and continues instead of failing. Use for an intermittent source you'd rather tolerate than let block the run.
+  </Card>
+</CardGroup>
+
+## The two windows
+
+Every rule carries both. Keeping them distinct is the key to using rules well.
+
+| Window | Meaning | Example |
+|---|---|---|
+| **In-effect window** | The wall-clock period during which the rule applies to runs that are *invoked*. Start can be **Now** (rounded to the quarter hour) or a date and time you choose; the end is optional. | From now until 15 September, 09:00 |
+| **Billing months** | The whole **months of cost data** the skip applies to inside those runs. | August and September 2026 |
+
+A run invoked inside the in-effect window skips the source for the listed billing months only; other months in the same run still process normally. Once the in-effect window passes, the rule **expires** and later runs process the source for every month again.
+
+<Info>
+  Because a standard run can cover several months, a rule with a one-month billing period only skips that month. A backfill that spans a year will still process the other eleven.
+</Info>
+
+## Create rules
+
+Rules live on the pipeline in the web app. You create them **in bulk** — one rule per provider — from a single dialog.
+
+<Steps>
+  <Step title="Open the pipeline's execution rules">
+    From the pipeline's page, open **Execution rules**. Existing rules are listed with their type, provider, data source, windows, and status.
+  </Step>
+  <Step title="Choose the providers and, optionally, the data source">
+    Select one or more providers. Selecting a provider skips **every** data source under it; pick a specific data source when only one is affected.
+  </Step>
+  <Step title="Pick the rule type">
+    **Skip extraction** or **Skip on error**.
+  </Step>
+  <Step title="Set the in-effect window">
+    Choose **Now** or a start date and time; add an end date and time if the rule should stop applying on its own.
+  </Step>
+  <Step title="Set the billing months">
+    Choose the first and last billing month the skip covers.
+  </Step>
+  <Step title="Create">
+    One rule is created for each provider you selected. Overlapping rules for the same provider and data source are rejected, so tidy up an existing rule first if you need to change it.
+  </Step>
+</Steps>
+
+<Frame caption="The execution-rule creation dialog — providers (and optional data source), rule type, in-effect window, and billing months, creating several rules at once">
+  ![The execution-rule creation dialog — providers (and optional data source), rule type, in-effect window, and billing months, creating several rules at once](/images/fig-48-execution-rule-dialog.png)
+</Frame>
+## Edit, disable, and expiry
+
+| Action | What it does |
+|---|---|
+| **Edit** | Change the rule's type, windows, or data source. Runs already invoked keep the rules that were applied to them. |
+| **Disable** | Set the rule to **Inactive**. It stays listed but no longer applies; re-enable it later if you need to. |
+| **Expire** | Automatic — when the in-effect window's end passes, the rule's status becomes **Expired**. |
+| **Delete** | Remove the rule entirely. |
+
+Rule statuses: **Active** · **Inactive** · **Expired**.
+
+## How a rule shows on a run
+
+- When a run is invoked, the rules in effect are **applied and recorded on the run**, so you can always see which rules shaped a given run's output.
+- The skipped sources appear as **Skipped** in the run graph.
+- A source with no data for the period also shows as **Skipped** (the run still succeeds). Check the run's recorded rules to tell the two apart; a distinct label for rule-driven skips is coming.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Running & monitoring" icon="play" href="/operating/running-and-monitoring">
+    Run types, the run details page, and what Skipped means in the run graph.
+  </Card>
+  <Card title="Retry & notification settings" icon="sliders" href="/operating/retry-and-notifications">
+    The alternative when data is merely late: wait and try again.
+  </Card>
+  <Card title="How to: Execute a pipeline" icon="play" href="/getting-started/execute-a-pipeline">
+    Invoking a run — where rules are applied and recorded.
+  </Card>
+  <Card title="Connections & credentials" icon="key" href="/data-foundation/connections-and-credentials">
+    Fixing a source that a rule is covering for.
+  </Card>
+</CardGroup>
