@@ -21,19 +21,19 @@
           {
             "group": "Overview",
             "pages": [
-              "introduction",
-              "use-cases",
-              "what-makes-stitcherai-different",
-              "architecture-two-engines"
+              "overview/introduction",
+              "overview/use-cases",
+              "overview/what-makes-stitcherai-different",
+              "overview/two-engines"
             ]
           },
           {
             "group": "Getting started",
             "pages": [
-              "how-to/access-stitcherai",
-              "how-to/connect-via-mcp",
-              "how-to/bring-in-a-dataset",
-              "how-to/execute-a-pipeline"
+              "getting-started/access-stitcherai",
+              "getting-started/connect-via-mcp",
+              "getting-started/bring-in-a-dataset",
+              "getting-started/execute-a-pipeline"
             ]
           },
           {
@@ -49,46 +49,46 @@
           {
             "group": "The data foundation",
             "pages": [
-              "data-foundation",
-              "integrations",
-              "connections-and-credentials",
-              "focus",
-              "ai-ingestion"
+              "data-foundation/overview",
+              "data-foundation/integrations",
+              "data-foundation/connections-and-credentials",
+              "data-foundation/focus",
+              "data-foundation/ai-ingestion"
             ]
           },
           {
             "group": "The semantic pipeline",
             "pages": [
-              "pipeline-overview",
+              "pipeline/overview",
               {
                 "group": "Connect",
                 "pages": [
-                  "connect/connect"
+                  "pipeline/connect"
                 ]
               },
               {
                 "group": "Model",
                 "pages": [
-                  "model",
-                  "model/prepare",
-                  "model/normalize",
-                  "model/enrich",
-                  "model/allocate"
+                  "pipeline/model/overview",
+                  "pipeline/model/prepare",
+                  "pipeline/model/normalize",
+                  "pipeline/model/enrich",
+                  "pipeline/model/allocate"
                 ]
               },
               {
                 "group": "Build",
                 "pages": [
-                  "build",
-                  "build/generate-artifacts",
-                  "build/govern",
-                  "build/events"
+                  "pipeline/build/overview",
+                  "pipeline/build/generate-artifacts",
+                  "pipeline/build/govern",
+                  "pipeline/build/events"
                 ]
               },
               {
                 "group": "Engage",
                 "pages": [
-                  "engage/engage"
+                  "pipeline/engage"
                 ]
               }
             ]
@@ -105,11 +105,11 @@
               {
                 "group": "Recipes",
                 "pages": [
-                  "how-to/attribute-cost",
-                  "how-to/build-an-allocation",
-                  "how-to/generate-an-artifact",
-                  "how-to/build-a-forecast",
-                  "how-to/build-a-cost-control"
+                  "authoring/recipes/attribute-cost",
+                  "authoring/recipes/build-an-allocation",
+                  "authoring/recipes/generate-an-artifact",
+                  "authoring/recipes/build-a-forecast",
+                  "authoring/recipes/build-a-cost-control"
                 ]
               }
             ]
@@ -117,7 +117,7 @@
           {
             "group": "The reasoning engine",
             "pages": [
-              "reasoning-engine",
+              "reasoning-engine/overview",
               "reasoning-engine/chargeback-and-erp",
               "reasoning-engine/what-if-simulation"
             ]
@@ -125,16 +125,16 @@
           {
             "group": "Operating StitcherAI",
             "pages": [
-              "running-and-monitoring",
-              "execution-rules",
-              "retry-and-notifications"
+              "operating/running-and-monitoring",
+              "operating/execution-rules",
+              "operating/retry-and-notifications"
             ]
           },
           {
             "group": "Security & Access",
             "pages": [
-              "access-and-administration",
-              "security"
+              "security/access-and-administration",
+              "security/tenancy-and-guardrails"
             ]
           }
         ]
@@ -164,8 +164,188 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/introduction",
+      "destination": "/overview/introduction",
       "permanent": false
+    },
+    {
+      "source": "/introduction",
+      "destination": "/overview/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/use-cases",
+      "destination": "/overview/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/what-makes-stitcherai-different",
+      "destination": "/overview/what-makes-stitcherai-different",
+      "permanent": true
+    },
+    {
+      "source": "/architecture-two-engines",
+      "destination": "/overview/two-engines",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/access-stitcherai",
+      "destination": "/getting-started/access-stitcherai",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/connect-via-mcp",
+      "destination": "/getting-started/connect-via-mcp",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/bring-in-a-dataset",
+      "destination": "/getting-started/bring-in-a-dataset",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/execute-a-pipeline",
+      "destination": "/getting-started/execute-a-pipeline",
+      "permanent": true
+    },
+    {
+      "source": "/data-foundation",
+      "destination": "/data-foundation/overview",
+      "permanent": true
+    },
+    {
+      "source": "/integrations",
+      "destination": "/data-foundation/integrations",
+      "permanent": true
+    },
+    {
+      "source": "/connections-and-credentials",
+      "destination": "/data-foundation/connections-and-credentials",
+      "permanent": true
+    },
+    {
+      "source": "/focus",
+      "destination": "/data-foundation/focus",
+      "permanent": true
+    },
+    {
+      "source": "/ai-ingestion",
+      "destination": "/data-foundation/ai-ingestion",
+      "permanent": true
+    },
+    {
+      "source": "/pipeline-overview",
+      "destination": "/pipeline/overview",
+      "permanent": true
+    },
+    {
+      "source": "/connect/connect",
+      "destination": "/pipeline/connect",
+      "permanent": true
+    },
+    {
+      "source": "/model",
+      "destination": "/pipeline/model/overview",
+      "permanent": true
+    },
+    {
+      "source": "/model/prepare",
+      "destination": "/pipeline/model/prepare",
+      "permanent": true
+    },
+    {
+      "source": "/model/normalize",
+      "destination": "/pipeline/model/normalize",
+      "permanent": true
+    },
+    {
+      "source": "/model/enrich",
+      "destination": "/pipeline/model/enrich",
+      "permanent": true
+    },
+    {
+      "source": "/model/allocate",
+      "destination": "/pipeline/model/allocate",
+      "permanent": true
+    },
+    {
+      "source": "/build",
+      "destination": "/pipeline/build/overview",
+      "permanent": true
+    },
+    {
+      "source": "/build/generate-artifacts",
+      "destination": "/pipeline/build/generate-artifacts",
+      "permanent": true
+    },
+    {
+      "source": "/build/govern",
+      "destination": "/pipeline/build/govern",
+      "permanent": true
+    },
+    {
+      "source": "/build/events",
+      "destination": "/pipeline/build/events",
+      "permanent": true
+    },
+    {
+      "source": "/engage/engage",
+      "destination": "/pipeline/engage",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/attribute-cost",
+      "destination": "/authoring/recipes/attribute-cost",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/build-an-allocation",
+      "destination": "/authoring/recipes/build-an-allocation",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/generate-an-artifact",
+      "destination": "/authoring/recipes/generate-an-artifact",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/build-a-forecast",
+      "destination": "/authoring/recipes/build-a-forecast",
+      "permanent": true
+    },
+    {
+      "source": "/how-to/build-a-cost-control",
+      "destination": "/authoring/recipes/build-a-cost-control",
+      "permanent": true
+    },
+    {
+      "source": "/reasoning-engine",
+      "destination": "/reasoning-engine/overview",
+      "permanent": true
+    },
+    {
+      "source": "/running-and-monitoring",
+      "destination": "/operating/running-and-monitoring",
+      "permanent": true
+    },
+    {
+      "source": "/execution-rules",
+      "destination": "/operating/execution-rules",
+      "permanent": true
+    },
+    {
+      "source": "/retry-and-notifications",
+      "destination": "/operating/retry-and-notifications",
+      "permanent": true
+    },
+    {
+      "source": "/access-and-administration",
+      "destination": "/security/access-and-administration",
+      "permanent": true
+    },
+    {
+      "source": "/security",
+      "destination": "/security/tenancy-and-guardrails",
+      "permanent": true
     },
     {
       "source": "/managing-ai-spend",

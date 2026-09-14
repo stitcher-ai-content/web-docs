@@ -3,7 +3,7 @@ title: "Cloud & SaaS cost management"
 description: "Cloud billing providers, data platforms, and SaaS/API providers arrive through native connectors and FOCUS exports; Commitment Discounts are reported from the billing feed, and AWS EKS/ECS split cost moves container spend onto the teams that consumed it."
 ---
 
-Cloud and SaaS spend is the bulk of most technology bills, and it is the most structured input to the [cost model](/cost-model/overview). Native FOCUS exports pass straight through; older export formats and provider APIs are normalized to [FOCUS](/focus) with a per-provider mapping. This page describes what is covered by family; the named list is on [Supported integrations](/integrations).
+Cloud and SaaS spend is the bulk of most technology bills, and it is the most structured input to the [cost model](/cost-model/overview). Native FOCUS exports pass straight through; older export formats and provider APIs are normalized to [FOCUS](/data-foundation/focus) with a per-provider mapping. This page describes what is covered by family; the named list is on [Supported integrations](/data-foundation/integrations).
 
 <Frame caption="Heterogeneous sources → one FOCUS-normalized, attributed table">
   ![Heterogeneous sources → one FOCUS-normalized, attributed table](/images/fig-02-normalize-before-after.png)
@@ -44,8 +44,8 @@ Cloud commitment-discount instruments — **Reserved Instances**, **Savings Plan
 
 | What you get | Where |
 |---|---|
-| Commitment-discount detail on each cost row (`CommitmentDiscountId`, `CommitmentDiscountType`, `CommitmentDiscountStatus`, and related columns) | The normalized cost model, after [Normalize](/model/normalize) |
-| Coverage and utilization against usage | The **Commitment-coverage report** indicator in [Generate](/build/generate-artifacts) |
+| Commitment-discount detail on each cost row (`CommitmentDiscountId`, `CommitmentDiscountType`, `CommitmentDiscountStatus`, and related columns) | The normalized cost model, after [Normalize](/pipeline/model/normalize) |
+| Coverage and utilization against usage | The **Commitment-coverage report** indicator in [Generate](/pipeline/build/generate-artifacts) |
 
 <Warning>
 **Commitment Discounts** are cloud discount instruments read from the billing feed. **[Contract Intelligence](/cost-model/contract-intelligence)** is a different construct: a signed vendor contract parsed from PDF into committed spend, Consumption, and reconciliation. The two are named apart throughout StitcherAI.
@@ -63,15 +63,15 @@ AWS's **Split Cost Allocation Data** records each EKS pod's (or ECS task's) shar
 **Prerequisite:** Split Cost Allocation Data must be enabled in AWS Billing and the export must be CUR 2.0. EKS is the production-validated path; ECS is supported with cluster and service dimensions.
 </Info>
 
-How allocation rules work, including this predefined method, is covered in [Allocate](/model/allocate); the step-by-step is in [Build an allocation](/how-to/build-an-allocation).
+How allocation rules work, including this predefined method, is covered in [Allocate](/pipeline/model/allocate); the step-by-step is in [Build an allocation](/authoring/recipes/build-an-allocation).
 
 ## Next
 
 <CardGroup cols={3}>
-  <Card title="Supported integrations" icon="list" href="/integrations">
+  <Card title="Supported integrations" icon="list" href="/data-foundation/integrations">
     The named catalog of providers, datasets, and connectors.
   </Card>
-  <Card title="Connections & credentials" icon="key" href="/connections-and-credentials">
+  <Card title="Connections & credentials" icon="key" href="/data-foundation/connections-and-credentials">
     Set up a cloud or SaaS connection with least-privilege access.
   </Card>
   <Card title="AI cost management" icon="microchip" href="/cost-model/ai-cost-management">

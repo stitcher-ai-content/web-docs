@@ -41,7 +41,7 @@ Right after sign-in the icon spins while metadata is retrieved. Once it finishes
   <Accordion title="Model — columns after each sub-stage, and allocation levels" icon="layer-group">
     Columns as they stand after **Prepare**, **Normalize**, and **Enrich** — so you can confirm what a Normalize step produced before you reference it in an Enrich rule.
 
-    **Allocate** is broken out by level, matching how [allocation](/model/allocate) is layered:
+    **Allocate** is broken out by level, matching how [allocation](/pipeline/model/allocate) is layered:
 
     | Level | What it holds |
     |---|---|
@@ -52,10 +52,10 @@ Right after sign-in the icon spins while metadata is retrieved. Once it finishes
     Each level lists its rules and the **allocation status columns** they produce.
   </Accordion>
   <Accordion title="Build — the artifacts your model generates" icon="cubes">
-    The **indicators / KPIs**, **derived datasets**, and **controls** your Build stage generates — each with its **group**, **name**, and output columns. Use this to find exactly what to reference in a downstream artifact or in Engage. See [Generate artifacts](/build/generate-artifacts).
+    The **indicators / KPIs**, **derived datasets**, and **controls** your Build stage generates — each with its **group**, **name**, and output columns. Use this to find exactly what to reference in a downstream artifact or in Engage. See [Generate artifacts](/pipeline/build/generate-artifacts).
   </Accordion>
   <Accordion title="Engage — what goes where" icon="paper-plane">
-    Destinations, and the artifacts routed to each. See [Engage](/engage/engage).
+    Destinations, and the artifacts routed to each. See [Engage](/pipeline/engage).
   </Accordion>
 </AccordionGroup>
 
@@ -65,7 +65,7 @@ Sources grouped the way connections are configured:
 
 - **Cost** — one entry per cost source, by provider and connection.
 - **Business** — one entry per business source.
-- **Shared, multi-purpose source connections** — a connection you've crafted several sources from. Expand it to see each source, tagged **cost** or **business**. See [Datasets, connectors & data connections](/data-foundation).
+- **Shared, multi-purpose source connections** — a connection you've crafted several sources from. Expand it to see each source, tagged **cost** or **business**. See [Datasets, connectors & data connections](/data-foundation/overview).
 
 ## Columns grouped by origin
 
@@ -73,7 +73,7 @@ Inside any source or stage, toggle **All · FOCUS · Custom**:
 
 | Origin | What's in it |
 |---|---|
-| **FOCUS** | The standard columns every normalized source shares — `BilledCost`, `EffectiveCost`, `ServiceName`, `ChargePeriodStart`, and the rest of [FOCUS](/focus) |
+| **FOCUS** | The standard columns every normalized source shares — `BilledCost`, `EffectiveCost`, `ServiceName`, `ChargePeriodStart`, and the rest of [FOCUS](/data-foundation/focus) |
 | **Custom** | Columns your source brought that FOCUS doesn't define, plus columns your Enrich and Allocate rules added |
 
 Each column shows its **type** and, where known, the **stage that introduced it**.
@@ -84,7 +84,7 @@ Look up any field across every source and stage. Type part of a name to see ever
 
 ## Run provenance
 
-The metadata comes from a real run of your pipeline. The browser shows **which run** it came from and when, so you know how fresh what you're looking at is. If you've changed the model since, run a scoped [debug run](/running-and-monitoring) against your branch and click **Refresh**.
+The metadata comes from a real run of your pipeline. The browser shows **which run** it came from and when, so you know how fresh what you're looking at is. If you've changed the model since, run a scoped [debug run](/operating/running-and-monitoring) against your branch and click **Refresh**.
 
 ## Copy column names
 
@@ -100,7 +100,7 @@ Switching **branch** or **environment** refreshes the metadata, so the browser n
   <Card title="Forms & autocomplete" icon="list-check" href="/authoring/forms-and-autocomplete">
     Use what you found — autocomplete offers exactly the columns the browser shows.
   </Card>
-  <Card title="Datasets, connectors & data connections" icon="database" href="/data-foundation">
+  <Card title="Datasets, connectors & data connections" icon="database" href="/data-foundation/overview">
     Cost vs business datasets, and shared connections you craft sources from.
   </Card>
 </CardGroup>

@@ -22,10 +22,10 @@ The cost model is versioned in Git, but you work with it visually. Branching, ch
     Stage and commit ("check in") your edits with a message. Push when you're ready — **unpushed branches are fine**: chat and validation work on them too.
   </Step>
   <Step title="Validate the branch">
-    Run **Validate Configuration** for a rules check without a run, then a scoped [debug run](/running-and-monitoring) against the branch to see it execute on real data.
+    Run **Validate Configuration** for a rules check without a run, then a scoped [debug run](/operating/running-and-monitoring) against the branch to see it execute on real data.
   </Step>
   <Step title="Open a pull request">
-    Open a pull request for peer review. Your repository's review and branch-protection rules apply — see [Access & administration](/access-and-administration).
+    Open a pull request for peer review. Your repository's review and branch-protection rules apply — see [Access & administration](/security/access-and-administration).
   </Step>
 </Steps>
 
@@ -42,7 +42,7 @@ A **tag** assigns a configuration version to the **cost period(s) it applies to*
 </Frame>
 
 <Tip>
-Branching and review give the model software-grade change control; tags make past runs replayable. A [standard run](/running-and-monitoring) uses the tag to pick the right configuration for the period it processes.
+Branching and review give the model software-grade change control; tags make past runs replayable. A [standard run](/operating/running-and-monitoring) uses the tag to pick the right configuration for the period it processes.
 </Tip>
 
 ## Who does what
@@ -51,7 +51,7 @@ Branching and review give the model software-grade change control; tags make pas
 |---|---|
 | Branch · check in (commit) · pull request | VS Code source-control panel, in the editor |
 | Tag a configuration version to cost periods | Web app |
-| Review rules and branch protection | Your GitHub repository — see [Access & administration](/access-and-administration) |
+| Review rules and branch protection | Your GitHub repository — see [Access & administration](/security/access-and-administration) |
 
 ## Related
 
@@ -62,10 +62,10 @@ Branching and review give the model software-grade change control; tags make pas
   <Card title="AI chat" icon="comments" href="/authoring/ai-chat">
     The assistant works on your branch — including edits you haven't checked in.
   </Card>
-  <Card title="Running & monitoring" icon="play" href="/running-and-monitoring">
+  <Card title="Running & monitoring" icon="play" href="/operating/running-and-monitoring">
     Validate a branch with a debug run; tags drive standard runs.
   </Card>
-  <Card title="Access & administration" icon="key" href="/access-and-administration">
+  <Card title="Access & administration" icon="key" href="/security/access-and-administration">
     The identity you sign in with, and the GitHub repository that holds your configuration.
   </Card>
 </CardGroup>

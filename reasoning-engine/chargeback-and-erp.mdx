@@ -3,10 +3,10 @@ title: "Chargeback & ERP invoicing"
 description: "Ask the FinOps Agent to turn your allocated model into a chargeback by cost center, draft one invoice per cost center, and submit the invoices to your ERP — currently in preview, with Zoho Books as the worked example."
 ---
 
-From your AI tool, the **FinOps Agent** turns the [allocated model](/model/allocate) into a **chargeback** — what each team owes — packages each cost center's share as a **draft invoice**, and **submits the invoices to your ERP**. One natural-language request drives the sequence end to end, and you approve before anything is submitted.
+From your AI tool, the **FinOps Agent** turns the [allocated model](/pipeline/model/allocate) into a **chargeback** — what each team owes — packages each cost center's share as a **draft invoice**, and **submits the invoices to your ERP**. One natural-language request drives the sequence end to end, and you approve before anything is submitted.
 
 <Note>
-**Preview.** Chargeback → ERP is delivered through the [Reasoning Engine](/reasoning-engine) in your AI tools (see [How to: Connect your AI tools](/how-to/connect-via-mcp)), not through a web-app screen, and is currently in preview. ERP-side submission is available for **Zoho Books** today, with other ERPs following.
+**Preview.** Chargeback → ERP is delivered through the [Reasoning Engine](/reasoning-engine/overview) in your AI tools (see [How to: Connect your AI tools](/getting-started/connect-via-mcp)), not through a web-app screen, and is currently in preview. ERP-side submission is available for **Zoho Books** today, with other ERPs following.
 </Note>
 
 ## Attribution, allocation, chargeback
@@ -15,12 +15,12 @@ Three related terms, three different jobs. Chargeback consumes what the first tw
 
 | Term | What it does | Where it happens |
 |---|---|---|
-| **Attribution** | Assigns each cost to the right party — team, product, cost center. | [Model → Enrich](/model/enrich) |
-| **Allocation** | Distributes shared cost to its consumers — double-entry and multi-level, so totals still reconcile. | [Model → Allocate](/model/allocate) |
+| **Attribution** | Assigns each cost to the right party — team, product, cost center. | [Model → Enrich](/pipeline/model/enrich) |
+| **Allocation** | Distributes shared cost to its consumers — double-entry and multi-level, so totals still reconcile. | [Model → Allocate](/pipeline/model/allocate) |
 | **Chargeback** | Bills teams from the allocated model. | The FinOps Agent — this page |
 
 <Info>
-Chargeback reads the allocation status that Allocate records on every row of the model. If shared cost hasn't been allocated yet, the agent reports it as unowned rather than inventing a recipient — build the allocation first ([How to: Build an allocation](/how-to/build-an-allocation)).
+Chargeback reads the allocation status that Allocate records on every row of the model. If shared cost hasn't been allocated yet, the agent reports it as unowned rather than inventing a recipient — build the allocation first ([How to: Build an allocation](/authoring/recipes/build-an-allocation)).
 </Info>
 
 ## The conversational flow
@@ -115,8 +115,8 @@ Below-materiality and unowned buckets are skipped; they are reported, not invoic
   <Card title="Through the FinOps Agent (this page)" icon="comments">
     On demand, in conversation: report → draft invoices → ERP, with your approval at each step. Nothing is scheduled; nothing is stored as an artifact.
   </Card>
-  <Card title="Through Build and Engage" icon="route" href="/engage/engage">
-    A chargeback table you [generate](/build/generate-artifacts) as an artifact and deliver to destinations on every run — the durable, scheduled path.
+  <Card title="Through Build and Engage" icon="route" href="/pipeline/engage">
+    A chargeback table you [generate](/pipeline/build/generate-artifacts) as an artifact and deliver to destinations on every run — the durable, scheduled path.
   </Card>
 </CardGroup>
 
@@ -125,10 +125,10 @@ Both read the same allocated model, so the numbers agree.
 ## Next steps
 
 <CardGroup cols={3}>
-  <Card title="Allocate" icon="sitemap" href="/model/allocate">
+  <Card title="Allocate" icon="sitemap" href="/pipeline/model/allocate">
     The double-entry allocation that chargeback is built on.
   </Card>
-  <Card title="How to: Connect your AI tools (MCP)" icon="plug" href="/how-to/connect-via-mcp">
+  <Card title="How to: Connect your AI tools (MCP)" icon="plug" href="/getting-started/connect-via-mcp">
     Connect the FinOps Agent before you run your first chargeback.
   </Card>
   <Card title="What-if simulation" icon="chart-line" href="/reasoning-engine/what-if-simulation">

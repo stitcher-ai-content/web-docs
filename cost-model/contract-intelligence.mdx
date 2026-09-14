@@ -20,7 +20,7 @@ It answers three questions:
 | What it is | A signed vendor agreement (a SaaS, data-platform, or API provider) parsed from PDF | Cloud provider discount instruments — Reserved Instances, Savings Plans, Committed Use Discounts |
 | Where the data comes from | The contract PDF, parsed into structured contract datasets | The FOCUS `CommitmentDiscount*` columns already in the billing feed |
 | What you get | Committed-liability curve, Consumption, invoice reconciliation, renewal/expiry | Coverage and utilization against usage |
-| Where it surfaces | The Contract intelligence source and the contract artifacts on this page | The Commitment-coverage report indicator in [Generate](/build/generate-artifacts); see [Cloud & SaaS](/cost-model/cloud-and-saas#commitment-discounts) |
+| Where it surfaces | The Contract intelligence source and the contract artifacts on this page | The Commitment-coverage report indicator in [Generate](/pipeline/build/generate-artifacts); see [Cloud & SaaS](/cost-model/cloud-and-saas#commitment-discounts) |
 
 ## How a contract becomes a source
 
@@ -59,7 +59,7 @@ A live usage-based cost source — a Snowflake or Twilio feed, for example — c
 After the linked usage feeds are normalized, StitcherAI aggregates their billed and effective cost per month and reports it **back to the contract**. That monthly figure is **Consumption** — the amount the commitment draws down by.
 
 - An in-progress month is shown as **plan** and replaced by the **measured actual** once the month completes.
-- Consumption also feeds a forward forecast of contract usage, so the burn-down projects whether the commitment will be used before expiry. See [Events & forecasting](/build/events).
+- Consumption also feeds a forward forecast of contract usage, so the burn-down projects whether the commitment will be used before expiry. See [Events & forecasting](/pipeline/build/events).
 
 <Note>
 **Consumption** is the working name for the drawn-down figure and its report; it is used consistently across the editor, the artifacts, and chat.
@@ -67,7 +67,7 @@ After the linked usage feeds are normalized, StitcherAI aggregates their billed 
 
 ## The contract artifacts
 
-Contract artifacts are built in [Generate](/build/generate-artifacts) like any other artifact.
+Contract artifacts are built in [Generate](/pipeline/build/generate-artifacts) like any other artifact.
 
 <AccordionGroup>
   <Accordion title="Commitment burn-down" icon="chart-line">
@@ -98,7 +98,7 @@ Further contract artifacts — invoice audit, budget variance, and anomaly detec
 
 ## The contracts dashboard in chat
 
-In the editor's chat, and through the [FinOps Agent](/reasoning-engine) in your AI tools, a **contracts dashboard** renders inline: each contract's committed spend, Consumption to date, remaining balance, and time to expiry — the same figures the burn-down artifact publishes. Ask about a contract and the dashboard answers with the current position.
+In the editor's chat, and through the [FinOps Agent](/reasoning-engine/overview) in your AI tools, a **contracts dashboard** renders inline: each contract's committed spend, Consumption to date, remaining balance, and time to expiry — the same figures the burn-down artifact publishes. Ask about a contract and the dashboard answers with the current position.
 
 ## The doc-organizer on-ramp
 
@@ -135,7 +135,7 @@ The doc-organizer works on copies, handles PDFs only, and sends nothing over the
   <Card title="Custom & internal cost datasets" icon="file-import" href="/cost-model/custom-and-internal">
     PDF invoices and custom cost files.
   </Card>
-  <Card title="Generate artifacts" icon="cubes" href="/build/generate-artifacts">
+  <Card title="Generate artifacts" icon="cubes" href="/pipeline/build/generate-artifacts">
     Where the contract artifacts are built.
   </Card>
 </CardGroup>

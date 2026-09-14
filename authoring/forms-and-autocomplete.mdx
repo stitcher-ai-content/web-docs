@@ -36,7 +36,7 @@ Each stage has its own rules, applied as you edit:
 | Stage | Examples of what's checked |
 |---|---|
 | **Connect** | A source names a connection; a cost source names a provider and a schema |
-| **Model** | A Normalize step produces the guaranteed [FOCUS](/focus) columns; an allocation rule names a strategy and a metric column |
+| **Model** | A Normalize step produces the guaranteed [FOCUS](/data-foundation/focus) columns; an allocation rule names a strategy and a metric column |
 | **Build** | An indicator names the artifact it builds from; a control names the indicator it evaluates and a threshold |
 | **Engage** | A delivery names a destination and the artifacts it sends |
 
@@ -63,7 +63,7 @@ It refreshes when you sign in, switch environment or branch, or click **Refresh*
 | An **artifact** reference — in a downstream artifact or in Engage | Artifacts by group and name |
 
 <Tip>
-Pickers that list connections show **Cost**, **Business**, and **Shared** sections. A shared connection starts unselected and asks you to choose cost or business before it will save — the choice is what tells the pipeline how to treat the data. See [Datasets, connectors & data connections](/data-foundation).
+Pickers that list connections show **Cost**, **Business**, and **Shared** sections. A shared connection starts unselected and asks you to choose cost or business before it will save — the choice is what tells the pipeline how to treat the data. See [Datasets, connectors & data connections](/data-foundation/overview).
 </Tip>
 
 ## Where it deliberately stays quiet
@@ -72,7 +72,7 @@ Autocomplete is designed to suggest only what fits, so an empty list is informat
 
 - **Signed out, or before metadata has refreshed** — nothing to suggest yet. Sign in, or wait for **Metadata refreshed at [time]**.
 - **A cost-only field never offers a business source**, and vice versa. A provider-bound field offers only that provider's connections.
-- **It suggests only columns that exist in the metadata.** It won't propose a column because the name looks plausible. If a column you expect is missing, the step that should create it hasn't been run yet — run a scoped [debug run](/running-and-monitoring) against your branch and refresh.
+- **It suggests only columns that exist in the metadata.** It won't propose a column because the name looks plausible. If a column you expect is missing, the step that should create it hasn't been run yet — run a scoped [debug run](/operating/running-and-monitoring) against your branch and refresh.
 - **Column-name collisions are flagged, not resolved silently.** When two sources or steps would produce the same column name, autocomplete warns you so you can rename or disambiguate.
 
 ## Direct configuration gets the same help
@@ -85,7 +85,7 @@ Prefer to edit the configuration text? The same suggestions appear as you type, 
   <Card title="AI chat" icon="comments" href="/authoring/ai-chat">
     Describe the outcome and let the assistant write the configuration into the right stage.
   </Card>
-  <Card title="Build an allocation" icon="scale-balanced" href="/how-to/build-an-allocation">
+  <Card title="Build an allocation" icon="scale-balanced" href="/authoring/recipes/build-an-allocation">
     A full walk through an allocation rule's form.
   </Card>
 </CardGroup>

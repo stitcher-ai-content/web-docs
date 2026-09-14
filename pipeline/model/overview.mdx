@@ -1,0 +1,52 @@
+---
+title: "Model"
+description: "Shape and attribute the data in four sub-stages — Prepare, Normalize, Enrich, Allocate."
+---
+
+**Model** is where raw, heterogeneous cost data becomes one comparable, attributed table. It runs in four sub-stages:
+
+<Steps>
+  <Step title="Prepare">
+    Clean raw vendor data — on its raw columns, before FOCUS exists.
+  </Step>
+  <Step title="Normalize">
+    Convert each source into the FOCUS schema.
+  </Step>
+  <Step title="Enrich">
+    Attach business context on top of FOCUS columns — where attribution mostly happens.
+  </Step>
+  <Step title="Allocate">
+    Distribute shared cost to the teams that consumed it.
+  </Step>
+</Steps>
+
+<Frame caption="Heterogeneous sources become one FOCUS-normalized, attributed table">
+  ![Heterogeneous sources become one FOCUS-normalized, attributed table](/images/fig-02-normalize-before-after.png)
+</Frame>
+## The four sub-stages
+
+<CardGroup cols={2}>
+  <Card title="Prepare" icon="broom" href="/pipeline/model/prepare">
+    Clean raw vendor data on its raw columns, before FOCUS exists.
+  </Card>
+  <Card title="Normalize" icon="table" href="/pipeline/model/normalize">
+    Map every source into the FOCUS schema, so cost from any provider is directly comparable.
+  </Card>
+  <Card title="Enrich" icon="sparkles" href="/pipeline/model/enrich">
+    Attach business context on top of FOCUS columns — the full operator catalog, and where attribution mostly happens.
+  </Card>
+  <Card title="Allocate" icon="share-nodes" href="/pipeline/model/allocate">
+    Distribute shared-service cost to the teams that consumed it — double-entry accounting guaranteed.
+  </Card>
+</CardGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build" icon="cubes" href="/pipeline/build/overview">
+    Generate KPIs, derived datasets, and forecasts from the modeled cost.
+  </Card>
+  <Card title="Connect" icon="plug" href="/pipeline/connect">
+    Back to configuring the data that feeds Model.
+  </Card>
+</CardGroup>

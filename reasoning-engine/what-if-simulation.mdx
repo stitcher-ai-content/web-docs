@@ -5,10 +5,10 @@ description: "Describe a change — scale a service, add an AI workload, swap a 
 
 In your AI tool, you describe a change and the **FinOps Agent** simulates its effect on spend from your live FOCUS model — a **baseline summary**, the **scenario's trajectory** over the horizon you choose, and a **critic review** of the decision — in one conversation.
 
-This is the quick, agent-driven tier of what-if. The durable, versioned tier is in-product event forecasting under [Events](/build/events); the two are compared [below](#two-tiers-of-what-if).
+This is the quick, agent-driven tier of what-if. The durable, versioned tier is in-product event forecasting under [Events](/pipeline/build/events); the two are compared [below](#two-tiers-of-what-if).
 
 <Note>
-Available through the [Reasoning Engine](/reasoning-engine) in any MCP-supported AI platform — see [How to: Connect your AI tools (MCP)](/how-to/connect-via-mcp).
+Available through the [Reasoning Engine](/reasoning-engine/overview) in any MCP-supported AI platform — see [How to: Connect your AI tools (MCP)](/getting-started/connect-via-mcp).
 </Note>
 
 ## Scenarios the agent can run
@@ -71,23 +71,23 @@ StitcherAI offers what-if analysis in two places. Use the one that matches the d
 
 | | In-product event forecasting | Agent simulation |
 |---|---|---|
-| **Where** | [Build → Events](/build/events), on an Indicator/KPI, in the StitcherAI Editor | The FinOps Agent in your AI tool |
+| **Where** | [Build → Events](/pipeline/build/events), on an Indicator/KPI, in the StitcherAI Editor | The FinOps Agent in your AI tool |
 | **Mechanism** | Named **event banks** applied to a real indicator, shown with vs without events | Scenarios over the live FOCUS model, with a paired critic review |
 | **Result** | A **durable, versioned** forecast artifact that re-runs with every pipeline run | A **conversational** answer for the decision in front of you |
-| **Use it for** | Plans of record, budgets, governed forecasts you [control](/build/govern) | Quick exploration before committing capacity or a vendor change |
-| **Get started** | [How to: Build a forecast](/how-to/build-a-forecast) | [How to: Connect your AI tools (MCP)](/how-to/connect-via-mcp) |
+| **Use it for** | Plans of record, budgets, governed forecasts you [control](/pipeline/build/govern) | Quick exploration before committing capacity or a vendor change |
+| **Get started** | [How to: Build a forecast](/authoring/recipes/build-a-forecast) | [How to: Connect your AI tools (MCP)](/getting-started/connect-via-mcp) |
 
 <Tip>
-Simulation results are not saved as artifacts. When a scenario is worth keeping — the migration you've decided to do, the launch that's now on the calendar — author it as an event in [Events](/build/events) so the forecast carries it forward on every run.
+Simulation results are not saved as artifacts. When a scenario is worth keeping — the migration you've decided to do, the launch that's now on the calendar — author it as an event in [Events](/pipeline/build/events) so the forecast carries it forward on every run.
 </Tip>
 
 ## Next steps
 
 <CardGroup cols={3}>
-  <Card title="Events" icon="calendar-plus" href="/build/events">
+  <Card title="Events" icon="calendar-plus" href="/pipeline/build/events">
     Durable, explainable forecasts driven by named business events.
   </Card>
-  <Card title="How to: Build a forecast" icon="chart-line" href="/how-to/build-a-forecast">
+  <Card title="How to: Build a forecast" icon="chart-line" href="/authoring/recipes/build-a-forecast">
     Enable forecast on an indicator and compare scenarios by toggling events.
   </Card>
   <Card title="Chargeback & ERP invoicing" icon="file-invoice-dollar" href="/reasoning-engine/chargeback-and-erp">

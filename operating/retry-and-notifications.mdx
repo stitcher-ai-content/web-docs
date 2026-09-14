@@ -1,0 +1,109 @@
+---
+title: "Retry & notification settings"
+description: "Two pipeline settings for unattended production — automatic retry when expected data isn't available yet, and run notifications to your email, Slack, and webhook groups — with their defaults and the run statuses they introduce."
+---
+
+Two pipeline-level settings govern what happens when a production run needs attention. **Automatic retry** lets a run wait and try again when expected data hasn't arrived; **run notifications** tell the right people when a run fails, completes, or is waiting. Both are edited on the pipeline in the web app and are **off by default**.
+
+<Info>
+  A run uses the settings in force **when it starts**. Editing the pipeline's settings mid-run doesn't change a run already in flight; the next run picks up the change.
+</Info>
+
+## Automatic retry
+
+When a run fails because expected data was not available yet — a **precondition failure**, typically a provider export or a business dataset that hasn't landed — StitcherAI can schedule a retry after an interval, up to a set number of attempts, instead of ending the run as failed.
+
+### How it behaves
+
+<Steps>
+  <Step title="The run hits a precondition failure">
+    A configured check finds the data missing — for example, a business dataset without rows for every day in the period. The run stops before producing partial output and shows the [precondition-failure report](/operating/running-and-monitoring#the-precondition-failure-report).
+  </Step>
+  <Step title="The run shows Retry scheduled">
+    If retry is on and attempts remain, the run's status becomes **Retry scheduled** with the time of the next attempt. The pipeline waits — no other run starts on it.
+  </Step>
+  <Step title="The retry runs automatically">
+    At the scheduled time StitcherAI starts a new attempt with the same scope and inputs. It keeps the original's name and schedule and records which run it retried and the attempt number.
+  </Step>
+  <Step title="Success, or Precondition failed">
+    If the data has arrived, the run completes normally. If attempts run out, the run ends as **Precondition failed** — a final status.
+  </Step>
+</Steps>
+
+Cancel a run in **Retry scheduled** from the run details page to stop the retry and free the pipeline.
+
+### Settings
+
+| Setting | Options | Default |
+|---|---|---|
+| **Enable automatic retry** | On / Off | Off |
+| **Maximum attempts** | 1 to 3 | — |
+| **Retry interval** | 1 minute to 4 hours | — |
+| **Applies to** | **Scheduled runs only** · Scheduled and standard runs · All run types (including debug) | Scheduled runs only |
+
+<Note>
+  Retry currently covers **data-not-available failures only**. A configuration error, a transformation error, or an unreachable destination ends as failed immediately, because re-running without a change would not succeed. Retry is not general fault tolerance.
+</Note>
+
+### Retry versus a skip
+
+| Situation | What you see | Retries? |
+|---|---|---|
+| A source finds **no rows** for the period | The source shows **Skipped**; the run succeeds | No |
+| A configured **precondition** finds expected data missing | The run stops with a precondition table; **Retry scheduled** or **Precondition failed** | Yes, if retry is on |
+| An [execution rule](/operating/execution-rules) skips a source | The source shows **Skipped**; the rule is recorded on the run | No |
+
+## Run notifications
+
+Run notifications send a message to your environment's **notification groups** when the run events you choose occur. Notification groups are defined once per environment and hold **email addresses, Slack channels, and webhooks**; the same groups also receive [Engage](/pipeline/engage) delivery notifications.
+
+### Settings
+
+| Option | Choices | Default |
+|---|---|---|
+| **Events** | **Run failed** · Run completed · Retry scheduled · Precondition failed | Run failed |
+| **Notify** | One or more notification groups (email · Slack · webhook) | — |
+| **Run types** | Which run types send notifications — scheduled, standard | Scheduled and standard |
+
+<AccordionGroup>
+  <Accordion title="Run failed" icon="circle-xmark">
+    A step failed for a reason retry can't recover from, or the run was otherwise unable to complete. The message names the failed step. This is the one event on by default.
+  </Accordion>
+  <Accordion title="Run completed" icon="circle-check">
+    The run finished and delivered output. Useful for a daily "data is ready" signal to a Slack channel or a webhook that kicks off a downstream job.
+  </Accordion>
+  <Accordion title="Retry scheduled" icon="clock-rotate-left">
+    Expected data wasn't available and a retry is booked. The message says which attempt this is and when it will run — "retry 2 of 3 scheduled for …" — so the recipient knows to wait rather than act.
+  </Accordion>
+  <Accordion title="Precondition failed" icon="triangle-exclamation">
+    Retries ran out (or retry is off) and the run ended because expected data never arrived. The message says so — "retries exhausted" — and points at the precondition-failure report.
+  </Accordion>
+</AccordionGroup>
+
+### Per-run override
+
+When you invoke a standard or debug run, **Send notifications** follows the pipeline's settings. Turn it off for that run only when you're watching it yourself — a backfill, for example. Debug runs suppress notifications regardless of this setting. See [How to: Execute a pipeline](/getting-started/execute-a-pipeline#invoke-the-run).
+
+## Run statuses these settings introduce
+
+| Status | Final? | Meaning |
+|---|---|---|
+| **Retry scheduled** | No | A retry is booked; the pipeline is waiting. Cancel to free it. |
+| **Precondition failed** | Yes | Expected data never arrived within the allowed attempts. Read the precondition-failure report, fix or wait for the data, and run again. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Running & monitoring" icon="play" href="/operating/running-and-monitoring">
+    Run types, run statuses, and the precondition-failure report.
+  </Card>
+  <Card title="Execution rules" icon="filter" href="/operating/execution-rules">
+    When data isn't just late — skip a source over a bounded window.
+  </Card>
+  <Card title="How to: Execute a pipeline" icon="play" href="/getting-started/execute-a-pipeline">
+    The per-run notification toggle at invoke.
+  </Card>
+  <Card title="Engage" icon="paper-plane" href="/pipeline/engage">
+    Destinations and the notification groups shared with delivery.
+  </Card>
+</CardGroup>
