@@ -3,7 +3,7 @@ title: "AI cost management"
 description: "AI spend is part of the cost model, not a separate tool. StitcherAI enriches it from each provider's APIs — breaking out input, output, and cached tokens and surfacing rates and cost per component — then joins telemetry to add the feature, team, and customer definition that makes AI unit economics real."
 ---
 
-AI spend is one family of spend in the [cost model](/cost-model/overview). It flows through the same pipeline as any other cost — connected, normalized to [FOCUS](/focus), attributed, allocated, and built into [artifacts](/build/generate-artifacts) like a cloud bill or a SaaS invoice — so an AI provider's spend sits next to cloud and SaaS in the same chargeback, forecast, and KPIs.
+AI spend is one family of spend in the [cost model](/cost-model/overview). It flows through the same pipeline as any other cost — connected, normalized to [FOCUS](/data-foundation/focus), attributed, allocated, and built into [artifacts](/pipeline/build/generate-artifacts) like a cloud bill or a SaaS invoice — so an AI provider's spend sits next to cloud and SaaS in the same chargeback, forecast, and KPIs.
 
 | Provider | What's ingested |
 |---|---|
@@ -46,7 +46,7 @@ The **model**, **workspace**, and **API key** are already in the provider's cost
 </CardGroup>
 
 <Note>
-This is enrichment **to the extent the provider's data supports it** — the same guaranteed-versus-best-effort principle as [FOCUS normalization](/focus). Provider data only carries so much definition.
+This is enrichment **to the extent the provider's data supports it** — the same guaranteed-versus-best-effort principle as [FOCUS normalization](/data-foundation/focus). Provider data only carries so much definition.
 </Note>
 
 ## Step 2 — add definition with telemetry
@@ -57,7 +57,7 @@ With telemetry joined in, you can build artifacts that express AI as a business 
 
 | Measure | Build it as |
 |---|---|
-| Cost per inference | A KPI in [Generate](/build/generate-artifacts) |
+| Cost per inference | A KPI in [Generate](/pipeline/build/generate-artifacts) |
 | Cost per feature | A cost-per-feature KPI |
 | Cost per tenant | A derived dataset |
 | Margin by feature | A derived dataset joining cost to revenue |
@@ -66,12 +66,12 @@ With telemetry joined in, you can build artifacts that express AI as a business 
 Provider data carries the **model, workspace, and API key**, and enrichment adds the **token, rate, and per-component detail** beneath them. Telemetry is how you reach **feature, team, and customer** — and true unit economics and margin.
 </Tip>
 
-Once these measures exist, you can govern them like any other KPI — for example, alerting when cost per tenant or margin by feature crosses a threshold. See [Govern](/build/govern).
+Once these measures exist, you can govern them like any other KPI — for example, alerting when cost per tenant or margin by feature crosses a threshold. See [Govern](/pipeline/build/govern).
 
 ## What the data can and can't carry
 
 <Warning>
-StitcherAI populates what the data supports and is explicit about what it can't manufacture. Provider data carries definition only so far; telemetry carries it further; definition that isn't present in the source is not invented. This is the same discipline applied to [FOCUS columns](/focus) elsewhere in the model.
+StitcherAI populates what the data supports and is explicit about what it can't manufacture. Provider data carries definition only so far; telemetry carries it further; definition that isn't present in the source is not invented. This is the same discipline applied to [FOCUS columns](/data-foundation/focus) elsewhere in the model.
 </Warning>
 
 ## Next
@@ -80,13 +80,13 @@ StitcherAI populates what the data supports and is explicit about what it can't 
   <Card title="The cost model" icon="layer-group" href="/cost-model/overview">
     How AI spend sits alongside cloud, SaaS, custom, and contract spend in one model.
   </Card>
-  <Card title="Supported integrations" icon="plug" href="/integrations">
+  <Card title="Supported integrations" icon="plug" href="/data-foundation/integrations">
     The AI providers available today and how each is connected.
   </Card>
-  <Card title="Enrich" icon="user-tag" href="/model/enrich">
+  <Card title="Enrich" icon="user-tag" href="/pipeline/model/enrich">
     How enriched AI cost is attributed to the teams that drove it.
   </Card>
-  <Card title="Allocate" icon="share-nodes" href="/model/allocate">
+  <Card title="Allocate" icon="share-nodes" href="/pipeline/model/allocate">
     How the shared portion is distributed onward.
   </Card>
 </CardGroup>
